@@ -2,7 +2,7 @@ const express =require('express')
 const path = require('path')
 const jwttoken=require('jsonwebtoken')
 const app =express()
-PORT = 3000||process.env.PORT
+PORT = process.env.PORT||3000
 require('./mongooseconnect/mongoose_connect')
 //ROUTES
 const login_route=require('./routes/login')
