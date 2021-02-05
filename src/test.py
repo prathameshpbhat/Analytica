@@ -15,30 +15,33 @@ api = tweepy.API(auth)
 
 
 # User Metrics
-# def metric():
-#     count = 0
-#     favourites = 0
-#     retweets = 0
-#     user = api.get_user("vibhavdhaimode8")
-#     for tweet in tweepy.Cursor(
-#         api.user_timeline,
-#         screen_name="vibhavdhaimode8",
-#         count=200,
-#         tweet_mode="extended",
-#     ).items(user.statuses_count):
-#         if "retweeted_status" not in tweet._json:
-#             count += 1
-#             print(f"#{count}")
-#             print(tweet._json["full_text"])
-#             fav = tweet._json["favorite_count"]
-#             print(f"favourites={fav}")
-#             rt = tweet._json["retweet_count"]
-#             print(f"retweets={rt}")
-#             favourites += tweet._json["favorite_count"]
-#             retweets += tweet._json["retweet_count"]
-#             print()
-#         print(f"totalfavourites={favourites}")
-#         print(f"totalretweets={retweets}")
+def metric():
+    count = 0
+    favourites = 0
+    retweets = 0
+    user = api.get_user("elonmusk")
+    for tweet in tweepy.Cursor(
+        api.user_timeline,
+        screen_name="elonmusk",
+        count=200,
+        tweet_mode="extended",
+    ).items(user.statuses_count):
+        if "retweeted_status" not in tweet._json:
+            count += 1
+            print(f"#{count}")
+            print(tweet._json["full_text"])
+            fav = tweet._json["favorite_count"]
+            print(f"favourites={fav}")
+            rt = tweet._json["retweet_count"]
+            print(f"retweets={rt}")
+            favourites += tweet._json["favorite_count"]
+            retweets += tweet._json["retweet_count"]
+            print()
+    print(f"totalfavourites={favourites}")
+    print(f"totalretweets={retweets}")
+
+
+# metric()
 
 
 # Replies
@@ -88,11 +91,13 @@ def reply_analysis():
 def text_analysis(search_term):
     search_query = f"{search_term} -filter:retweets"
     results = tweepy.Cursor(
-        api.search, q=search_query, lang="en", tweet_mode="extended", count=100
-    ).items(100)
+        api.search, q=search_query, lang="en", tweet_mode="extended", count=100, result_type="popular"
+    ).items(200)
     tweets = []
     for result in results:
-        tweets.append(result._json["full_text"])
+        tweet = {"text": result._json["full_text"], "username": result._json["user"]["screen_name"],
+                 "favorite_count": result._json["favorite_count"], "retweet_count": result._json["retweet_count"], "created_at": result._json["created_at"]}
+        tweets.append(tweet)
     tweets = list(filter(None, tweets))
     print(json.dumps(tweets))
     sys.stdout.flush()
