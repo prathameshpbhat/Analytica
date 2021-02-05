@@ -91,7 +91,7 @@ def reply_analysis():
 def text_analysis(search_term):
     search_query = f"{search_term} -filter:retweets"
     results = tweepy.Cursor(
-        api.search, q=search_query, lang="en", tweet_mode="extended", count=100, result_type="popular"
+        api.search, q=search_query, lang="en", tweet_mode="extended", count=100
     ).items(200)
     tweets = []
     for result in results:
