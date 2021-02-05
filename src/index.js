@@ -1,6 +1,5 @@
 require('dotenv').config()
 
-
 const express = require('express')
 const path = require('path')
 const jwttoken = require('jsonwebtoken')
@@ -11,10 +10,10 @@ require('./mongooseconnect/mongoose_connect')
 const login_route = require('./routes/login')
 const test = require('./routes/test')
 
-const search_route = require('./routes/search')
-const userovertime = require('./routes/user/overtime')
-const usertoday = require('./routes/user/today')
-const usermentions = require('./routes/user/mentions')
+const search_route = require('./routes/twitterapi/search')
+const usertweets = require('./routes/twitterapi/user/tweets')
+const usermentions = require('./routes/twitterapi/user/mentions')
+const trends = require('./routes/twitterapi/trends')
 //
 
 
@@ -27,9 +26,9 @@ app.use(login_route)
 app.use(test)
 
 app.use(search_route);
-app.use(userovertime);
-app.use(usertoday);
+app.use(usertweets);
 app.use(usermentions);
+app.use(trends);
 
 app.listen(PORT, () => {
   console.log('server started')
