@@ -5,7 +5,7 @@ const axios = require('axios');
 const config = {
     headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer AAAAAAAAAAAAAAAAAAAAAN4MHQEAAAAAZpvpgeO08HS4m9BTBof6klQqlA0%3DVAUtSQIJT29FctKyAeIC0BfipMIHdOLWJbNSkRPparHevBnDos`
+        Authorization: `Bearer ${process.env.BEARER_TOKEN}`
     }
 }
 
