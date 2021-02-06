@@ -9,45 +9,46 @@ const config = {
     }
 }
 
-// router.get('/analytica/tweet/search/:variable', (req, res) => {
-//     const spawn = require("child_process").spawn;
-//     const pythonProcess = spawn('python', ["./test.py", req.params.variable]);
-//     let body = "";
-//     pythonProcess.stdout.on('data', (data) => {
-//         body += data;
-//         body = JSON.parse(body);
-//     });
-//     pythonProcess.stdout.on('end', function () {
-//         console.log(body);
-//         return res.status(200).json(body);
-//     });
+router.get('/analytica/tweet/search/:variable', (req, res) => {
+    const spawn = require("child_process").spawn;
+    const pythonProcess = spawn('python', [`./PythonFiles/other_testing_pickle.py`, req.params.variable]);
+    let body = "";
+    pythonProcess.stdout.on('data', (data) => {
+        body += data;
+    });
+    pythonProcess.stdout.on('end', function () {
+        let data = JSON.parse(body);
+        return res.status(200).json(data);
+    });
 
-//     pythonProcess.stderr.on('data', (data) => {
-//         return res.status(400).send(data);
-//     });
-// })
-
-router.get('/analytica/tweet/search/:variable', async (req, res) => {
-    let count = 0;
-    let api_endpoint = `https://api.twitter.com/2/tweets/search/recent?query=${req.params.variable} -is:retweet&expansions=author_id&max_results=100&media.fields=public_metrics&tweet.fields=public_metrics,created_at&user.fields=username,location`;
-    let response = await axios.get(api_endpoint, config);
-    let tweets = response.data.data;
-    count += tweets.length;
-    let all_tweets = tweets;
-    let next_token = response.data.meta.next_token;
-    while (count < 1000) {
-        response = await axios.get(`${api_endpoint}&next_token=${next_token}`, config)
-        tweets = response.data.data;
-        count += tweets.length;
-        all_tweets = all_tweets.concat(tweets);
-        next_token = response.data.meta.next_token;
-    }
-    console.log(count)
-    return res.status(200).json({
-        all_tweets
-    })
+    pythonProcess.stderr.on('data', (data) => {
+        return res.status(400).send(data);
+    });
 })
 
+// SEARCH USING API v2
+// router.get('/analytica/tweet/search/:variable', async (req, res) => {
+//     let count = 0;
+//     let api_endpoint = `https://api.twitter.com/2/tweets/search/recent?query=${req.params.variable} -is:retweet&expansions=author_id&max_results=100&media.fields=public_metrics&tweet.fields=public_metrics,created_at&user.fields=username,location`;
+//     let response = await axios.get(api_endpoint, config);
+//     let tweets = response.data.data;
+//     count += tweets.length;
+//     let all_tweets = tweets;
+//     let next_token = response.data.meta.next_token;
+//     while (count < 1000) {
+//         response = await axios.get(`${api_endpoint}&next_token=${next_token}`, config)
+//         tweets = response.data.data;
+//         count += tweets.length;
+//         all_tweets = all_tweets.concat(tweets);
+//         next_token = response.data.meta.next_token;
+//     }
+//     console.log(count)
+//     return res.status(200).json({
+//         all_tweets
+//     })
+// })
+
+// SEARCH USING API V1.1
 // router.get('/analytica/tweet/search/:variable', async (req, res) => {
 //     let count = 0;
 //     let all_tweets = [];
