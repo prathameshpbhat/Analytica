@@ -17,6 +17,7 @@ route.post('/Analytica/users/Register',async (req,res)=>{
             await user.save()
             res.status(200).json({
                 status:'success',
+                Username:req.body.Email,
                 'token':token
             })
         }
@@ -42,6 +43,7 @@ route.get('/Analytica/users/Login',async (req,res)=>{
   
         await user.save()
         res.status(200).json({
+            Username:req.body.Email,
             'token':token
         })
 
