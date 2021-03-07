@@ -1,91 +1,91 @@
 const express = require('express');
 const router = express.Router();
 const axios = require("axios");
+const path = require('path');
+const rootPath = path.dirname(require.main.filename)
+const Search = require('../../models/search');
+const isLoggedIn=require("../../middleware/isloggedin")
 
-const config = {
-    headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BEARER_TOKEN}`
+
+router.post('/analytica/tweet/search',isLoggedIn,async (req, res) => {
+  
+
+    if(!req.token){
+       return res.status(401).send({
+            error:"user not authorised"
+        });
     }
-}
 
-router.get('/analytica/tweet/search/:variable', (req, res) => {
-    const spawn = require("child_process").spawn;
-    const pythonProcess = spawn('python', [`./PythonFiles/other_testing_pickle.py`, req.params.variable]);
-    let body = "";
-    pythonProcess.stdout.on('data', (data) => {
-        body += data;
-    });
-    pythonProcess.stdout.on('end', function () {
-        let data = JSON.parse(body);
-        return res.status(200).json(data);
-    });
+    const search_query = req.body.search_query;
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+    const url = "https://sentiment-analysis-micro.herokuapp.com/search"
+    try {
+        let request_payload = {
+            query: search_query,
+            mode: 1
+        }
+        console.log("raunak is here")
+        let response = await axios.post(url, request_payload, config);
 
-    pythonProcess.stderr.on('data', (data) => {
-        return res.status(400).send(data);
-    });
+        if (response.status == 202) {
+            return res.status(202).json({
+                "status": "The request has been accepted. Please wait",
+                "documentId": response.data.documentId
+            });
+        } else {
+            return res.status(response.status).json({
+                "status": "The request did not work. Please try again"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            "error": error
+        })
+    }
 })
 
-// SEARCH USING API v2
-// router.get('/analytica/tweet/search/:variable', async (req, res) => {
-//     let count = 0;
-//     let api_endpoint = `https://api.twitter.com/2/tweets/search/recent?query=${req.params.variable} -is:retweet&expansions=author_id&max_results=100&media.fields=public_metrics&tweet.fields=public_metrics,created_at&user.fields=username,location`;
-//     let response = await axios.get(api_endpoint, config);
-//     let tweets = response.data.data;
-//     count += tweets.length;
-//     let all_tweets = tweets;
-//     let next_token = response.data.meta.next_token;
-//     while (count < 1000) {
-//         response = await axios.get(`${api_endpoint}&next_token=${next_token}`, config)
-//         tweets = response.data.data;
-//         count += tweets.length;
-//         all_tweets = all_tweets.concat(tweets);
-//         next_token = response.data.meta.next_token;
-//     }
-//     console.log(count)
-//     return res.status(200).json({
-//         all_tweets
-//     })
-// })
+router.get('/analytica/tweet/search/status', (req, res) => {
+    Search.findById(req.query.documentId).then(search => {
+        if (search) {
+            if (search.status == 0) {
+                return res.status(204).send();
+            } else if (search.status == 1) {
+                return res.status(200).json({
+                    "status": "The response is ready."
+                });
+            }
+        } else {
+            return res.status(404).json({
+                error: "Search not made"
+            })
+        }
+    }).catch(err => {
+        return res.status(500).json({
+            error: err
+        })
+    })
+})
 
-// SEARCH USING API V1.1
-// router.get('/analytica/tweet/search/:variable', async (req, res) => {
-//     let count = 0;
-//     let all_tweets = [];
-//     let api_endpoint = `https://api.twitter.com/1.1/search/tweets.json?q=${req.params.variable} -filter:retweets&lang=en&count=100&tweet_mode=extended`;
-//     let response = await axios.get(api_endpoint, config);
-//     let tweets = response.data.statuses;
-//     tweets.forEach(tweet => {
-//         all_tweets.unshift({
-//             "id": tweet.id,
-//             "text": tweet.full_text,
-//             "username": tweet.user.screen_name,
-//             "created_at": tweet.created_at,
-//             "favourite_count": tweet.favorite_count,
-//             "retweet_count": tweet.retweet_count
-//         })
-//         count++;
-//     });
-//     next_results = response.data.search_metadata.next_results;
-//     while (count < 1000) {
-//         response = await axios.get(`https://api.twitter.com/1.1/search/tweets.json${next_results}`, config)
-//         tweets.forEach(tweet => {
-//             all_tweets.unshift({
-//                 "id": tweet.id,
-//                 "text": tweet.full_text,
-//                 "username": tweet.user.screen_name,
-//                 "created_at": tweet.created_at,
-//                 "favourite_count": tweet.favorite_count,
-//                 "retweet_count": tweet.retweet_count
-//             })
-//             count++;
-//         });
-//         next_results = response.data.search_metadata.next_results;
-//     }
-//     console.log(count);
-//     return res.status(200).json({
-//         all_tweets
-//     })
-// })
+router.get('/analytica/tweet/search/download', (req, res) => {
+    Search.findById(req.query.documentId).then(search => {
+        if (search) {
+            return res.status(200).json({
+                Result: search.results
+            })
+        } else {
+            return res.status(404).json({
+                error: "Search not made"
+            })
+        }
+    }).catch(err => {
+        return res.status(500).json({
+            error: err
+        })
+    })
+})
 
 module.exports = router;

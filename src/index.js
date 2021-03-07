@@ -10,29 +10,33 @@ require('./mongooseconnect/mongoose_connect')
 const login_route = require('./routes/login')
 const test = require('./routes/test')
 
-const search_route = require('./routes/twitterapi/search')
+
 const usertweets = require('./routes/twitterapi/user/tweets')
 const usermentions = require('./routes/twitterapi/user/mentions')
 const trends = require('./routes/twitterapi/trends')
+const instagramRoute = require('./routes/instagramapi/instagram')
+const instagramdb = require('./routes/instagramapi/instagramdb')
+const twitterDB = require('./routes/twitterapi/database/twitterdb')
+const searchRoute = require('./routes/twitterapi/search')
 //
 
-
+app.use(express.json())
 app.use(express.urlencoded({
   extended: true
 }));
 
 
+app.use(twitterDB);
+app.use(searchRoute);
+app.use(usermentions);
+app.use(instagramdb)
+app.use(instagramRoute)
 app.use(login_route)
 app.use(test)
-
-app.use(search_route);
-
-
-
 app.use(usertweets);
-
-app.use(usermentions);
 app.use(trends);
+
+
 
 app.listen(PORT, () => {
   console.log('server started')

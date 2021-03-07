@@ -15,6 +15,8 @@ route.post('/Analytica/users/Register',async (req,res)=>{
             user.tokens=user.tokens.concat({token});
             
             await user.save()
+       
+        req.token=token;
             res.status(200).json({
                 status:'success',
                 Username:req.body.Email,
@@ -65,7 +67,7 @@ route.post('/Analytica/users/Logout',auth,async (req,res)=>{
                 return true
                
             }
-            console.log('here')
+           
             return false
         })
 

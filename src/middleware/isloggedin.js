@@ -1,14 +1,39 @@
 const express = require('express')
 const flash = require('connect-flash')
-
-const isloggedin = (req,res,next)=>
+const users=require('../models/users')
+const isloggedin = async (req,res,next)=>
 {
-    if(req.isAuthenticated())
-    {
-        return next()
+
+    let response;
+    try{
+        response=await users.find({Email:req.body.email,
+            tokens: { 
+                $elemMatch: { token: req.body.token } 
+             }
+         })
+         if(response.length!=0){
+          
+             console.log(response)
+             req.token=req.body.token
+            return next();
+         }
+         else{
+            
+             req.token=undefined;
+           return  next();
+         }
+
     }
-    req.flash('Error','Your need to login')
-    res.redirect('/login')
+    catch(e){
+console.log(e)
+      return  next();
+
+
+    }
+
+   
+    
+  
 }
 
 module.exports =isloggedin
