@@ -2,85 +2,116 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const mongoose = require('mongoose');
-const path = require('path');
-const rootPath = path.dirname(require.main.filename)
-const oauth = require(`${rootPath}/oauthv1`);
-const User = require('../../../models/users');
+const oauth = require(`../../../libs/oauthv1`);
+// const User = require(`../../../models/twitterapi/user`);
 
 mongoose.set('useFindAndModify', false);
 
 // All the api requests
 
 // MAKE TWEET (Post status)
-router.post('/analytica/tweet/personal/update-status', async (req, res) => {
+router.post('/analytica/twitter/personal/update-status', async (req, res) => {
     try {
+        // const oauth_token = req.body.oauth_token;
+        // const oauth_token_secret = req.body.oauth_token_secret;
         const api_endpoint = `https://api.twitter.com/1.1/statuses/update.json`;
-        const params = new URLSearchParams()
-        params.append('status', req.body.status)
+        const options = {
+            method: 'POST',
+            url: api_endpoint,
+            params: {
+                status: req.body.status
+            },
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const headers = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization: oauth.generateAuthHeader('POST', api_endpoint, {
-                    status: req.body.status
-                })
+                Authorization: oauth.generateAuthHeader(options)
             }
         }
+        const params = new URLSearchParams()
+        params.append('status', req.body.status)
         const response = await axios.post(api_endpoint, params, headers);
         return res.status(res.statusCode).json(response.data);
     } catch (error) {
         if (error.response) {
             return res.status(error.response.status).json(error);
         } else {
-            return res.status(400).json(error.toString())
+            return res.status(500).json(error.toString())
         }
     }
 })
 
 // REPLY TO A TWEET
-router.post('/analytica/tweet/personal/reply/:tweetid', async (req, res) => {
+router.post('/analytica/twitter/personal/reply/:tweetid', async (req, res) => {
     try {
+        // const oauth_token = req.body.oauth_token;
+        // const oauth_token_secret = req.body.oauth_token_secret;
         const tweetid = req.params.tweetid;
+        const getUsernameOptions = {
+            method: 'GET',
+            url: "https://api.twitter.com/1.1/statuses/show.json",
+            params: {
+                id: tweetid
+            },
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const userResponse = await axios.get(`https://api.twitter.com/1.1/statuses/show.json?id=${tweetid}`, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('GET', `https://api.twitter.com/1.1/statuses/show.json`, {
-                    id: tweetid
-                })
+                Authorization: oauth.generateAuthHeader(getUsernameOptions)
             }
         });
         const username = userResponse.data.user.screen_name;
-        const api_endpoint = `https://api.twitter.com/1.1/statuses/update.json`;
-        const params = new URLSearchParams()
-        params.append('status', `@${username} ${req.body.status}`)
-        params.append('in_reply_to_status_id', tweetid)
+
+        const postReplyOptions = {
+            method: 'POST',
+            url: "https://api.twitter.com/1.1/statuses/update.json",
+            params: {
+                status: `@${username} ${req.body.status}`,
+                in_reply_to_status_id: tweetid
+            },
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const headers = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization: oauth.generateAuthHeader('POST', api_endpoint, {
-                    status: `@${username} ${req.body.status}`,
-                    in_reply_to_status_id: tweetid
-                })
+                Authorization: oauth.generateAuthHeader(postReplyOptions)
             }
         }
-        const response = await axios.post(api_endpoint, params, headers);
+        const params = new URLSearchParams()
+        params.append('status', `@${username} ${req.body.status}`)
+        params.append('in_reply_to_status_id', tweetid)
+        const response = await axios.post("https://api.twitter.com/1.1/statuses/update.json", params, headers);
         return res.status(res.statusCode).json(response.data);
     } catch (error) {
         if (error.response) {
             return res.status(error.response.status).json(error);
         } else {
-            return res.status(400).json(error.toString())
+            return res.status(500).json(error.toString())
         }
     }
 })
 
 // DELETE TWEET
-router.delete('/analytica/tweet/personal/delete-status/:tweetid', async (req, res) => {
+router.delete('/analytica/twitter/personal/delete-status/:tweetid', async (req, res) => {
     try {
         const api_endpoint = `https://api.twitter.com/1.1/statuses/destroy/${req.params.tweetid}.json`;
+        // const oauth_token = req.body.oauth_token;
+        // const oauth_token_secret = req.body.oauth_token_secret;
+        const options = {
+            method: 'POST',
+            url: api_endpoint,
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const headers = {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('POST', api_endpoint)
+                Authorization: oauth.generateAuthHeader(options)
             }
         }
         const response = await axios.post(api_endpoint, {}, headers);
@@ -95,13 +126,21 @@ router.delete('/analytica/tweet/personal/delete-status/:tweetid', async (req, re
 })
 
 // RETWEET A TWEET
-router.post('/analytica/tweet/personal/retweet/:tweetid', async (req, res) => {
+router.post('/analytica/twitter/personal/retweet/:tweetid', async (req, res) => {
     try {
         const api_endpoint = `https://api.twitter.com/1.1/statuses/retweet/${req.params.tweetid}.json`;
+        // const oauth_token = req.body.oauth_token;
+        // const oauth_token_secret = req.body.oauth_token_secret;
+        const options = {
+            method: 'POST',
+            url: api_endpoint,
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const headers = {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('POST', api_endpoint)
+                Authorization: oauth.generateAuthHeader(options)
             }
         }
         const response = await axios.post(api_endpoint, {}, headers);
@@ -116,13 +155,21 @@ router.post('/analytica/tweet/personal/retweet/:tweetid', async (req, res) => {
 })
 
 // UNRETWEET A TWEET
-router.post('/analytica/tweet/personal/unretweet/:tweetid', async (req, res) => {
+router.post('/analytica/twitter/personal/unretweet/:tweetid', async (req, res) => {
     try {
         const api_endpoint = `https://api.twitter.com/1.1/statuses/unretweet/${req.params.tweetid}.json`;
+        // const oauth_token = req.body.oauth_token;
+        // const oauth_token_secret = req.body.oauth_token_secret;
+        const options = {
+            method: 'POST',
+            url: api_endpoint,
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const headers = {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('POST', api_endpoint)
+                Authorization: oauth.generateAuthHeader(options)
             }
         }
         let response = await axios.post(api_endpoint, {}, headers);
@@ -137,19 +184,28 @@ router.post('/analytica/tweet/personal/unretweet/:tweetid', async (req, res) => 
 })
 
 // LIKE TWEET
-router.post('/analytica/tweet/personal/favourite', async (req, res) => {
+router.post('/analytica/twitter/personal/favourite', async (req, res) => {
     try {
         const api_endpoint = `https://api.twitter.com/1.1/favorites/create.json`;
-        const params = new URLSearchParams();
-        params.append('id', req.body.tweetid)
+        // const oauth_token = req.body.oauth_token;
+        // const oauth_token_secret = req.body.oauth_token_secret;
+        const options = {
+            method: 'POST',
+            url: api_endpoint,
+            params: {
+                id: req.body.tweetid
+            },
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const headers = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization: oauth.generateAuthHeader('POST', api_endpoint, {
-                    id: req.body.tweetid
-                })
+                Authorization: oauth.generateAuthHeader(options)
             }
         }
+        const params = new URLSearchParams();
+        params.append('id', req.body.tweetid)
         let response = await axios.post(api_endpoint, params, headers);
         return res.status(res.statusCode).json(response.data);
     } catch (error) {
@@ -162,19 +218,28 @@ router.post('/analytica/tweet/personal/favourite', async (req, res) => {
 })
 
 // REMOVE LIKE FROM TWEET
-router.post('/analytica/tweet/personal/unfavourite', async (req, res) => {
+router.post('/analytica/twitter/personal/unfavourite', async (req, res) => {
     try {
         const api_endpoint = `https://api.twitter.com/1.1/favorites/destroy.json`;
-        const params = new URLSearchParams();
-        params.append('id', req.body.tweetid)
+        // const oauth_token = req.body.oauth_token;
+        // const oauth_token_secret = req.body.oauth_token_secret;
+        const options = {
+            method: 'POST',
+            url: api_endpoint,
+            params: {
+                id: req.body.tweetid
+            },
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const headers = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization: oauth.generateAuthHeader('POST', api_endpoint, {
-                    id: req.body.tweetid
-                })
+                Authorization: oauth.generateAuthHeader(options)
             }
         }
+        const params = new URLSearchParams();
+        params.append('id', req.body.tweetid)
         const response = await axios.post(api_endpoint, params, headers);
         return res.status(res.statusCode).json(response.data);
     } catch (error) {
@@ -187,17 +252,26 @@ router.post('/analytica/tweet/personal/unfavourite', async (req, res) => {
 })
 
 // GET RECENT LIKED TWEETS OF USER
-router.get('/analytica/tweet/personal/favourite-list', async (req, res) => {
+router.get('/analytica/twitter/personal/favourite-list', async (req, res) => {
     try {
         let count = 0;
         const api_endpoint = `https://api.twitter.com/1.1/favorites/list.json`;
         const api_parameters = `?count=200`
+        // const oauth_token = req.query.oauth_token;
+        // const oauth_token_secret = req.query.oauth_token_secret;
+        const options = {
+            method: 'GET',
+            url: api_endpoint,
+            params: {
+                'count': '200'
+            },
+            // oauth_token: oauth_token,
+            // oauth_token_secret: oauth_token_secret
+        }
         const response = await axios.get(`${api_endpoint}${api_parameters}`, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
-                    'count': '200'
-                })
+                Authorization: oauth.generateAuthHeader(options)
             }
         });
         const tweets = response.data;
@@ -218,32 +292,20 @@ router.get('/analytica/tweet/personal/favourite-list', async (req, res) => {
 });
 
 // GET ALL TWEETS OAUTH v1.0
-router.post('/analytica/tweet/personal/engagement', async (req, res) => {
-    try {
-        const userResponse = await axios.get(`https://api.twitter.com/2/users/by/username/${req.body.username}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('GET', `https://api.twitter.com/2/users/by/username/${req.body.username}`)
-            }
-        });
-        let userid = "";
-        if (userResponse.data.data) {
-            userid = userResponse.data.data.id;
-        } else {
-            return res.status(400).json({
-                Error: userResponse.data
-            })
-        }
 
+// ACCEPT REQUEST AND WRITE RESPONSE TWEETS TO DATABASE
+router.post('/analytica/twitter/personal/tweets', async (req, res) => {
+    try {
         let documentId = "";
         const user = await User.findOne({
-            username: req.body.username
+            userid: req.body.userid
         })
         if (user) {
             documentId = user.id;
         } else {
             let userTweets = new User({
                 status: 0,
+                userid: req.body.userid,
                 username: req.body.username,
                 results: [],
                 count: 0,
@@ -262,35 +324,49 @@ router.post('/analytica/tweet/personal/engagement', async (req, res) => {
         try {
 
             let count = 0;
-            const api_endpoint = `https://api.twitter.com/2/users/${userid}/tweets`;
+            const api_endpoint = `https://api.twitter.com/2/users/${req.body.userid}/tweets`;
             const api_parameters = `?expansions=in_reply_to_user_id,referenced_tweets.id&exclude=retweets&max_results=100&tweet.fields=public_metrics,created_at,conversation_id`
+            // const oauth_token = req.body.oauth_token;
+            // const oauth_token_secret = req.body.oauth_token_secret;
+            const options = {
+                method: 'GET',
+                url: api_endpoint,
+                params: {
+                    'expansions': 'in_reply_to_user_id,referenced_tweets.id',
+                    'exclude': 'retweets',
+                    'max_results': '100',
+                    'tweet.fields': 'public_metrics,created_at,conversation_id'
+                },
+                // oauth_token: oauth_token,
+                // oauth_token_secret: oauth_token_secret
+            }
             let response = await axios.get(`${api_endpoint}${api_parameters}`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
-                        'expansions': 'in_reply_to_user_id,referenced_tweets.id',
-                        'exclude': 'retweets',
-                        'max_results': '100',
-                        'tweet.fields': 'public_metrics,created_at,conversation_id'
-                    })
-                    // Authorization: `Bearer ${process.env.BEARER_TOKEN}`
+                    Authorization: oauth.generateAuthHeader(options)
                 }
             });
             let tweets = response.data.data;
             let all_tweets = tweets;
             let next_token = response.data.meta.next_token;
             while (next_token) {
+                const options = {
+                    method: 'GET',
+                    url: api_endpoint,
+                    params: {
+                        'expansions': 'in_reply_to_user_id,referenced_tweets.id',
+                        'exclude': 'retweets',
+                        'max_results': '100',
+                        'tweet.fields': 'public_metrics,created_at,conversation_id',
+                        'pagination_token': next_token
+                    },
+                    // oauth_token: oauth_token,
+                    // oauth_token_secret: oauth_token_secret
+                }
                 response = await axios.get(`${api_endpoint}${api_parameters}&pagination_token=${next_token}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
-                            'expansions': 'in_reply_to_user_id,referenced_tweets.id',
-                            'exclude': 'retweets',
-                            'max_results': '100',
-                            'tweet.fields': 'public_metrics,created_at,conversation_id',
-                            'pagination_token': next_token
-                        })
-                        // Authorization: `Bearer ${process.env.BEARER_TOKEN}`
+                        Authorization: oauth.generateAuthHeader(options)
                     }
                 })
                 tweets = response.data.data;
@@ -324,81 +400,97 @@ router.post('/analytica/tweet/personal/engagement', async (req, res) => {
     }
 });
 
-router.get('/analytica/tweet/personal/engagement/status', async (req, res) => {
-    // await User.findById(req.query.documentId).then(user => {
-    //     if (user) {
-    //         if (search.status == 0) {
-    //             return res.status(202).json({
-    //                 status: 0
-    //             })
-    //         } else if (search.status == 1) {
-    //             return res.status(200).json({
-    //                 status: 1,
-    //                 Result: search.results
-    //             })
-    //         }
-    //     } else {
-    //         return res.status(404).json({
-    //             error: "Search not made"
-    //         })
-    //     }
-    // }).catch(err => {
-    //     return res.status(500).json({
-    //         error: err
-    //     })
-    // })
+// RETURN STATUS OF RESPONSE (POLLING)
+router.get('/analytica/twitter/personal/tweets/status', async (req, res) => {
+    await User.findById(req.query.documentId).then(user => {
+        if (user) {
+            if (search.status == 0) {
+                return res.status(204).send();
+            } else if (search.status == 1) {
+                return res.status(200).json({
+                    status: 1,
+                    Result: search.results
+                })
+            }
+        } else {
+            return res.status(404).json({
+                error: "Search not made"
+            })
+        }
+    }).catch(err => {
+        return res.status(500).json({
+            error: err
+        })
+    })
 });
 
-// GET TWEETS MADE TODAY
-router.get('/analytica/tweet/personal/:username/engagement/today', async (req, res) => {
-    try {
-        const userResponse = await axios.get(`
-                https://api.twitter.com/2/users/by/username/${req.params.username}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('GET', `https://api.twitter.com/2/users/by/username/${req.params.username}`)
-            }
-        });
-        userid = userResponse.data.data.id;
+// DOWNLOAD THE COMPLETE RESPONSE
+router.get('/analytica/twitter/personal/tweets/download', (req, res) => {
+    User.findById(req.query.documentId).then(user => {
+        if (user) {
+            return res.status(200).json({
+                Result: user.results
+            })
+        } else {
+            return res.status(404).json({
+                error: "User's tweets not found"
+            })
+        }
+    }).catch(err => {
+        return res.status(500).json({
+            error: err
+        })
+    })
+})
 
+// GET TWEETS MADE TODAY
+router.get('/analytica/twitter/personal/tweets/today', async (req, res) => {
+    try {
         let d = new Date();
         d.setHours(0, 0, 0, 0);
         d = d.toISOString();
 
         let count = 0;
-        const api_endpoint = `https://api.twitter.com/2/users/${userid}/tweets`;
+        const api_endpoint = `https://api.twitter.com/2/users/${req.body.userid}/tweets`;
         const api_parameters = `?exclude=retweets&start_time=${d}&max_results=100&tweet.fields=public_metrics,created_at`
+        // const options = {
+        //     method: 'GET',
+        //     url: api_endpoint,
+        //     params: {
+        //         'exclude': 'retweets',
+        //         'start_time': d,
+        //         'max_results': '100',
+        //         'tweet.fields': 'public_metrics,created_at'
+        //     }
+        // }
         let response = await axios.get(`${api_endpoint}${api_parameters}`, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
-                    'exclude': 'retweets',
-                    'start_time': d,
-                    'max_results': '100',
-                    'tweet.fields': 'public_metrics,created_at'
-                })
+                Authorization: `Bearer ${process.env.BEARER_TOKEN}`
+                // Authorization: oauth.generateAuthHeader(options)
             }
         });
         let tweets = response.data.data;
         let all_tweets = tweets;
-        // let next_token = response.data.meta.next_token;
-        // while (next_token) {
-        //     response = await axios.get(`${api_endpoint}${api_parameters}&pagination_token=${next_token}`, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
-        //                 'exclude': 'retweets',
-        //                 'start_time': d,
-        //                 'max_results': '100',
-        //                 'tweet.fields': 'public_metrics,created_at',
-        //                 'pagination_token': next_token
-        //             })
-        //         }
-        //     })
-        //     tweets = response.data.data;
-        //     all_tweets = all_tweets.concat(tweets);
-        //     next_token = response.data.meta.next_token;
-        // }
+        let next_token = response.data.meta.next_token;
+        while (next_token) {
+            response = await axios.get(`${api_endpoint}${api_parameters}&pagination_token=${next_token}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${process.env.BEARER_TOKEN}`
+                    // Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
+                    //     'exclude': 'retweets',
+                    //     'start_time': d,
+                    //     'max_results': '100',
+                    //     'tweet.fields': 'public_metrics,created_at',
+                    //     'pagination_token': next_token
+                    // })
+                }
+            })
+            tweets = response.data.data;
+            all_tweets = all_tweets.concat(tweets);
+            next_token = response.data.meta.next_token;
+        }
         for (tweet in all_tweets) {
             count++;
         }

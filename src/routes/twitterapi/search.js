@@ -1,18 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const axios = require("axios");
-const path = require('path');
-const rootPath = path.dirname(require.main.filename)
 const Search = require('../../models/search');
-const isLoggedIn=require("../../middleware/isloggedin")
+const isLoggedIn = require("../../middleware/isloggedin")
 
 
-router.post('/analytica/tweet/search',isLoggedIn,async (req, res) => {
-  
+router.post('/analytica/twitter/search', isLoggedIn, async (req, res) => {
 
-    if(!req.token){
-       return res.status(401).send({
-            error:"user not authorised"
+
+    if (!req.token) {
+        return res.status(401).send({
+            error: "user not authorised"
         });
     }
 
@@ -28,7 +26,6 @@ router.post('/analytica/tweet/search',isLoggedIn,async (req, res) => {
             query: search_query,
             mode: 1
         }
-        console.log("raunak is here")
         let response = await axios.post(url, request_payload, config);
 
         if (response.status == 202) {
@@ -43,12 +40,12 @@ router.post('/analytica/tweet/search',isLoggedIn,async (req, res) => {
         }
     } catch (error) {
         return res.status(500).json({
-            "error": error
+            "error": error.toString()
         })
     }
 })
 
-router.get('/analytica/tweet/search/status', (req, res) => {
+router.get('/analytica/twitter/search/status', (req, res) => {
     Search.findById(req.query.documentId).then(search => {
         if (search) {
             if (search.status == 0) {
@@ -65,12 +62,12 @@ router.get('/analytica/tweet/search/status', (req, res) => {
         }
     }).catch(err => {
         return res.status(500).json({
-            error: err
+            error: err.toString()
         })
     })
 })
 
-router.get('/analytica/tweet/search/download', (req, res) => {
+router.get('/analytica/twitter/search/download', (req, res) => {
     Search.findById(req.query.documentId).then(search => {
         if (search) {
             return res.status(200).json({
@@ -83,7 +80,7 @@ router.get('/analytica/tweet/search/download', (req, res) => {
         }
     }).catch(err => {
         return res.status(500).json({
-            error: err
+            error: err.toString()
         })
     })
 })

@@ -9,14 +9,10 @@ const config = {
     }
 }
 
-router.get('/analytica/tweet/personal/:username/mentions', async (req, res) => {
-    console.log("raunak here")
-    // try {
-        let userid = await axios.get(`https://api.twitter.com/2/users/by/username/${req.params.username}`, config);
-        userid = userid.data.data.id;
+router.get('/analytica/twitter/personal/:userid/mentions', async (req, res) => {
+    try {
         let count = 0;
-
-        let api_endpoint = `https://api.twitter.com/2/users/${userid}/mentions?max_results=100&media.fields=public_metrics&tweet.fields=public_metrics,created_at`
+        let api_endpoint = `https://api.twitter.com/2/users/${req.params.userid}/mentions?max_results=100&media.fields=public_metrics&tweet.fields=public_metrics,created_at`
         let response = await axios.get(api_endpoint, config);
         let mentions = response.data.data;
         let all_mentions = mentions;
@@ -33,23 +29,19 @@ router.get('/analytica/tweet/personal/:username/mentions', async (req, res) => {
         return res.status(200).json({
             all_mentions
         });
-    // } 
-    // catch (error) {
-    //     return res.status(400).json(error);
-    // }
+    } catch (error) {
+        return res.status(400).json(error);
+    }
 });
 
-router.get('/analytica/tweet/personal/:username/mentions/today', async (req, res) => {
+router.get('/analytica/twitter/personal/:userid/mentions/today', async (req, res) => {
     try {
-        let userid = await axios.get(`https://api.twitter.com/2/users/by/username/${req.params.username}`, config);
-        userid = userid.data.data.id;
-
         let count = 0;
         let d = new Date();
         d.setHours(0, 0, 0, 0);
         d = d.toISOString()
 
-        let api_endpoint = `https://api.twitter.com/2/users/${userid}/mentions?max_results=100&start_time=${d}&media.fields=public_metrics&tweet.fields=public_metrics,created_at`
+        let api_endpoint = `https://api.twitter.com/2/users/${req.params.userid}/mentions?max_results=100&start_time=${d}&media.fields=public_metrics&tweet.fields=public_metrics,created_at`
         let response = await axios.get(api_endpoint, config);
         let mentions = response.data.data;
         let all_mentions = mentions;

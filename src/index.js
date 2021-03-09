@@ -6,36 +6,41 @@ const jwttoken = require('jsonwebtoken')
 const app = express()
 PORT = process.env.PORT || 3000
 require('./mongooseconnect/mongoose_connect')
-//ROUTES
-const login_route = require('./routes/login')
-const test = require('./routes/test')
-
-
-const usertweets = require('./routes/twitterapi/user/tweets')
-const usermentions = require('./routes/twitterapi/user/mentions')
-const trends = require('./routes/twitterapi/trends')
-const instagramRoute = require('./routes/instagramapi/instagram')
-const instagramdb = require('./routes/instagramapi/instagramdb')
-const twitterDB = require('./routes/twitterapi/database/twitterdb')
-const searchRoute = require('./routes/twitterapi/search')
-//
 
 app.use(express.json())
 app.use(express.urlencoded({
   extended: true
 }));
 
+//ROUTES
+const login_route = require('./routes/login')
+const test = require('./routes/test')
 
-app.use(twitterDB);
-app.use(searchRoute);
-app.use(usermentions);
-app.use(instagramdb)
-app.use(instagramRoute)
+
+const twitterDB = require('./routes/twitterapi/database/twitterdb')
+const twitter_authRoute = require('./routes/twitterapi/user/auth')
+const twitter_searchRoute = require('./routes/twitterapi/search')
+const twitter_userTweets = require('./routes/twitterapi/user/tweets')
+const twitter_usermentions = require('./routes/twitterapi/user/mentions')
+const twitter_trends = require('./routes/twitterapi/trends')
+
+const instagramRoute = require('./routes/instagramapi/instagram')
+const instagramdb = require('./routes/instagramapi/instagramdb')
+
+//
+
 app.use(login_route)
 app.use(test)
-app.use(usertweets);
-app.use(trends);
 
+app.use(twitterDB);
+app.use(twitter_authRoute);
+app.use(twitter_searchRoute);
+app.use(twitter_userTweets);
+app.use(twitter_usermentions);
+app.use(twitter_trends);
+
+app.use(instagramdb)
+app.use(instagramRoute)
 
 
 app.listen(PORT, () => {

@@ -9,7 +9,7 @@ const config = {
     }
 }
 
-router.get('/analytica/tweet/trends/worldwide', async (req, res) => {
+router.get('/analytica/twitter/trends/worldwide', async (req, res) => {
     try {
         let response = await axios.get(`https://api.twitter.com/1.1/trends/place.json?id=1`, config);
         let trends = response.data[0].trends;
@@ -19,7 +19,7 @@ router.get('/analytica/tweet/trends/worldwide', async (req, res) => {
     }
 });
 
-router.get('/analytica/tweet/trends/nearby', async (req, res) => {
+router.get('/analytica/twitter/trends/nearby', async (req, res) => {
     try {
         let locationResponse = await axios.get(`https://api.twitter.com/1.1/trends/closest.json?lat=15.283219&long=73.986191`, config);
         let myWoeID = locationResponse.data[0].woeid;

@@ -31,16 +31,25 @@ module.exports = {
     },
 
     // Make function to generate OAuth v1.0 Authorization Header
-    generateAuthHeader: function (method, url, params) {
+    generateAuthHeader: function ({
+        method,
+        url,
+        params,
+        oauth_token = process.env.ACCESS_TOKEN,
+        oauth_token_secret = process.env.ACCESS_TOKEN_SECRET
+    }) {
         let timestamp = Math.floor(Date.now() / 1000).toString()
         let authNonce = module.exports.makeNonce();
+
+        // console.log(oauth_token);
+        // console.log(oauth_token_secret);
 
         const unordered = {
             'oauth_consumer_key': process.env.CONSUMER_KEY,
             'oauth_nonce': authNonce,
             'oauth_signature_method': 'HMAC-SHA1',
             'oauth_timestamp': timestamp,
-            'oauth_token': process.env.ACCESS_TOKEN,
+            'oauth_token': oauth_token,
             'oauth_version': '1.0'
         };
 
@@ -56,9 +65,8 @@ module.exports = {
         );
 
         const parameterString = module.exports.serialize(ordered)
-
         const signatureBaseString = `${method}&${module.exports.fixedEncodeURIComponent(url)}&${module.exports.fixedEncodeURIComponent(parameterString)}`
-        const signingKey = `${module.exports.fixedEncodeURIComponent(process.env.CONSUMER_SECRET)}&${module.exports.fixedEncodeURIComponent(process.env.ACCESS_TOKEN_SECRET)}`
+        const signingKey = `${module.exports.fixedEncodeURIComponent(process.env.CONSUMER_SECRET)}&${module.exports.fixedEncodeURIComponent(oauth_token_secret)}`
         const signature = crypto.createHmac('sha1', signingKey)
             .update(signatureBaseString)
             .digest('base64');
@@ -69,7 +77,7 @@ module.exports = {
             'oauth_signature': signature,
             'oauth_signature_method': 'HMAC-SHA1',
             'oauth_timestamp': timestamp,
-            'oauth_token': process.env.ACCESS_TOKEN,
+            'oauth_token': oauth_token,
             'oauth_version': '1.0'
         }
         encodedHeaderObject = {}
