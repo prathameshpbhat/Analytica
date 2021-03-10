@@ -34,4 +34,7 @@ const InstagramSchema  = mongoose.Schema({
     timestamps: true
 })
 
-module.exports = InstagramSchema
+
+
+const Instagram=mongoose.model('insta_searches',InstagramSchema)
+module.exports = Instagram

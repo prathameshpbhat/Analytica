@@ -24,11 +24,9 @@ const InstagramCommentSchema  = mongoose.Schema({
     results: {
         type: Array,
     },
-    count: {
-        type: Number
-    }
+   
 }, {
     timestamps: true
 })
-
+const Instagram=mongoose.model('insta_comments',InstagramCommentSchema)
 module.exports = InstagramCommentSchema

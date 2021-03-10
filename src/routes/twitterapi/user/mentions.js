@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const isloggedin = require('../../../middleware/isloggedin');
 
 const config = {
     headers: {
@@ -9,7 +10,13 @@ const config = {
     }
 }
 
-router.get('/analytica/twitter/personal/:userid/mentions', async (req, res) => {
+router.get('/analytica/twitter/personal/:userid/mentions',isloggedin, async (req, res) => {
+    if (!req.token) {
+        return res.status(401).send({
+            error: "user not authorised"
+        });
+    }
+
     try {
         let count = 0;
         let api_endpoint = `https://api.twitter.com/2/users/${req.params.userid}/mentions?max_results=100&media.fields=public_metrics&tweet.fields=public_metrics,created_at`
@@ -34,7 +41,13 @@ router.get('/analytica/twitter/personal/:userid/mentions', async (req, res) => {
     }
 });
 
-router.get('/analytica/twitter/personal/:userid/mentions/today', async (req, res) => {
+router.get('/analytica/twitter/personal/:userid/mentions/today',isloggedin, async (req, res) => {
+    if (!req.token) {
+        return res.status(401).send({
+            error: "user not authorised"
+        });
+    }
+
     try {
         let count = 0;
         let d = new Date();

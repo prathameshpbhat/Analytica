@@ -5,17 +5,19 @@ const isloggedin = async (req, res, next) => {
 
     let response;
     try {
+      
         response = await users.find({
-            Email: req.body.email,
+            Email: req.body.user,
             tokens: {
                 $elemMatch: {
                     token: req.body.token
                 }
             }
         })
+  
         if (response.length != 0) {
 
-            console.log(response)
+        
             req.token = req.body.token
             return next();
         } else {

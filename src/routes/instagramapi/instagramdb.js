@@ -8,13 +8,20 @@ const instagramdb=require('../../models/instagram')
 const instagramCommentDb=require('../../models/instagramcommentschema')
 
 
-router.get('/instagram/tags/:documentId/status',async (req,res)=>{
+router.post('/instagram/tags/:documentId/status',isloggedin,async (req,res)=>{
 
+  if (!req.token) {
+    return res.status(401).send({
+        error: "user not authorised"
+    });
+}
 
-    let documenID=req.params.tag;
+    let documenID=req.params.documentId;
+    console.log(documenID)
     let data;
     try{
       data =await instagramdb.findById(documenID);
+      console.log(data)
       if(data.status==1){
         res.send({status:data.status,result:data,error:""})
       }
@@ -24,14 +31,19 @@ router.get('/instagram/tags/:documentId/status',async (req,res)=>{
       }
     }
     catch(e){
-      res.send({status:data.status,result:data,error:e})
+      res.send({error:e})
   
     }
    
   
   })
-  router.get('/instagram/alltags',async (req,res)=>{
+  router.get('/instagram/alltags',isloggedin,async (req,res)=>{
 
+    if (!req.token) {
+      return res.status(401).send({
+          error: "user not authorised"
+      });
+  }
 
 
     let data;
@@ -53,13 +65,19 @@ router.get('/instagram/tags/:documentId/status',async (req,res)=>{
 
 
   //COMMENTS
-  router.get('/instagram/comments/:documentId/status',async (req,res)=>{
+  router.get('/instagram/comments/:documentId/status',isloggedin,async (req,res)=>{
 
+    if (!req.token) {
+      return res.status(401).send({
+          error: "user not authorised"
+      });
+  }
 
     let documenID=req.params.documentId;
     let data;
     try{
       data =await instagramdb.findById(documenID);
+      console.log(data)
       if(data.status==1){
         res.send({status:data.status,result:data})
       }
