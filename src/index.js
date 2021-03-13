@@ -3,10 +3,14 @@ require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const jwttoken = require('jsonwebtoken')
+const cors=require('cors')
+
 const app = express()
 PORT = process.env.PORT || 3000
 require('./mongooseconnect/mongoose_connect')
 
+
+app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({
   extended: true
