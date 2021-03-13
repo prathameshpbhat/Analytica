@@ -11,7 +11,7 @@ mongoose.set('useFindAndModify', false);
 // All the api requests
 
 // MAKE TWEET (Post status)
-router.post('/analytica/twitter/personal/update-status',isloggedin, async (req, res) => {
+router.post('/analytica/twitter/personal/update-status', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -51,7 +51,7 @@ router.post('/analytica/twitter/personal/update-status',isloggedin, async (req, 
 })
 
 // REPLY TO A TWEET
-router.post('/analytica/twitter/personal/reply/:tweetid',isloggedin, async (req, res) => {
+router.post('/analytica/twitter/personal/reply/:tweetid', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -110,7 +110,7 @@ router.post('/analytica/twitter/personal/reply/:tweetid',isloggedin, async (req,
 })
 
 // DELETE TWEET
-router.delete('/analytica/twitter/personal/delete-status/:tweetid',isloggedin, async (req, res) => {
+router.delete('/analytica/twitter/personal/delete-status/:tweetid', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -145,7 +145,7 @@ router.delete('/analytica/twitter/personal/delete-status/:tweetid',isloggedin, a
 })
 
 // RETWEET A TWEET
-router.post('/analytica/twitter/personal/retweet/:tweetid',isloggedin, async (req, res) => {
+router.post('/analytica/twitter/personal/retweet/:tweetid', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -180,7 +180,7 @@ router.post('/analytica/twitter/personal/retweet/:tweetid',isloggedin, async (re
 })
 
 // UNRETWEET A TWEET
-router.post('/analytica/twitter/personal/unretweet/:tweetid',isloggedin, async (req, res) => {
+router.post('/analytica/twitter/personal/unretweet/:tweetid', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -215,7 +215,7 @@ router.post('/analytica/twitter/personal/unretweet/:tweetid',isloggedin, async (
 })
 
 // LIKE TWEET
-router.post('/analytica/twitter/personal/favourite',isloggedin, async (req, res) => {
+router.post('/analytica/twitter/personal/favourite', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -255,7 +255,7 @@ router.post('/analytica/twitter/personal/favourite',isloggedin, async (req, res)
 })
 
 // REMOVE LIKE FROM TWEET
-router.post('/analytica/twitter/personal/unfavourite',isloggedin, async (req, res) => {
+router.post('/analytica/twitter/personal/unfavourite', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -295,7 +295,7 @@ router.post('/analytica/twitter/personal/unfavourite',isloggedin, async (req, re
 })
 
 // GET RECENT LIKED TWEETS OF USER
-router.get('/analytica/twitter/personal/favourite-list',isloggedin, async (req, res) => {
+router.get('/analytica/twitter/personal/favourite-list', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -343,7 +343,7 @@ router.get('/analytica/twitter/personal/favourite-list',isloggedin, async (req, 
 // GET ALL TWEETS OAUTH v1.0
 
 // ACCEPT REQUEST AND WRITE RESPONSE TWEETS TO DATABASE
-router.post('/analytica/twitter/personal/tweets',isloggedin, async (req, res) => {
+router.post('/analytica/twitter/personal/tweets', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -456,7 +456,7 @@ router.post('/analytica/twitter/personal/tweets',isloggedin, async (req, res) =>
 });
 
 // RETURN STATUS OF RESPONSE (POLLING)
-router.get('/analytica/twitter/personal/tweets/status',isloggedin, async (req, res) => {
+router.get('/analytica/twitter/personal/tweets/status', isloggedin, async (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -486,7 +486,7 @@ router.get('/analytica/twitter/personal/tweets/status',isloggedin, async (req, r
 });
 
 // DOWNLOAD THE COMPLETE RESPONSE
-router.get('/analytica/twitter/personal/tweets/download',isloggedin, (req, res) => {
+router.get('/analytica/twitter/personal/tweets/download', isloggedin, (req, res) => {
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -511,7 +511,13 @@ router.get('/analytica/twitter/personal/tweets/download',isloggedin, (req, res) 
 })
 
 // GET TWEETS MADE TODAY
-router.get('/analytica/twitter/personal/tweets/today', async (req, res) => {
+router.get('/analytica/twitter/personal/tweets/today', isloggedin, async (req, res) => {
+    if (!req.token) {
+        return res.status(401).send({
+            error: "user not authorised"
+        });
+    }
+
     try {
         let d = new Date();
         d.setHours(0, 0, 0, 0);

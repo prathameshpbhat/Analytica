@@ -1,17 +1,11 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
-const jwt=require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 
-const twitterSchema  = mongoose.Schema({
-   
-    Author:{
-      
-      
-            type:mongoose.Schema.Types.ObjectId,
-            
-   
-       
+const twitterSchema = mongoose.Schema({
+    Author: {
+        type: String,
     },
     status: {
         type: Number,
@@ -31,4 +25,5 @@ const twitterSchema  = mongoose.Schema({
     timestamps: true
 })
 
-module.exports = twitterSchema
+const Twitter = mongoose.model('twitter_searches', twitterSchema)
+module.exports = Twitter

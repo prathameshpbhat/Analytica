@@ -1,20 +1,14 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
-const jwt=require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 
-const InstagramSchema  = mongoose.Schema({
-   
-    Author:{
-      
-      
-            type:mongoose.Schema.Types.ObjectId,
-            
-   
-       
+const InstagramSchema = mongoose.Schema({
+    Author: {
+        type: String,
     },
-    shortcode:{
-        type:String,
+    shortcode: {
+        type: String,
     },
     status: {
         type: Number,
@@ -36,5 +30,5 @@ const InstagramSchema  = mongoose.Schema({
 
 
 
-const Instagram=mongoose.model('insta_searches',InstagramSchema)
+const Instagram = mongoose.model('insta_searches', InstagramSchema)
 module.exports = Instagram

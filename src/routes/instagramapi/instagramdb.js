@@ -1,98 +1,141 @@
-const express= require('express')
-const axios =require('axios')
+const express = require('express')
+const axios = require('axios')
 const Insta = require('scraper-instagram');
 const isloggedin = require('../../middleware/isloggedin');
 const InstaClient = new Insta();
 const router = express.Router();
-const instagramdb=require('../../models/instagram')
-const instagramCommentDb=require('../../models/instagramcommentschema')
+const instagramdb = require('../../models/instagram')
+const instagramCommentDb = require('../../models/instagramcommentschema')
 
 
-router.post('/instagram/tags/:documentId/status',isloggedin,async (req,res)=>{
+router.post('/instagram/tags/:documentId/status', isloggedin, async (req, res) => {
 
   if (!req.token) {
     return res.status(401).send({
-        error: "user not authorised"
+      error: "user not authorised"
     });
-}
+  }
 
-    let documenID=req.params.documentId;
-    console.log(documenID)
-    let data;
-    try{
-      data =await instagramdb.findById(documenID);
-      console.log(data)
-      if(data.status==1){
-        res.send({status:data.status,result:data,error:""})
-      }
-      else{
-        res.send({status:data.status,result:data,error:""})
-  
-      }
-    }
-    catch(e){
-      res.send({error:e})
-  
-    }
-   
-  
-  })
-  router.get('/instagram/alltags',isloggedin,async (req,res)=>{
-
-    if (!req.token) {
-      return res.status(401).send({
-          error: "user not authorised"
+  let documenID = req.params.documentId;
+  console.log(documenID)
+  let data;
+  try {
+    data = await instagramdb.findById(documenID);
+    console.log(data)
+    if (data.status == 1) {
+      return res.status(200).json({
+        "status": "The response is ready."
       });
+    } else {
+      return res.status(204).send();
+    }
+  } catch (e) {
+    res.send({
+      error: e
+    })
+
+  }
+})
+
+router.get('/instagram/tags/:documentId/download', (req, res) => {
+  instagramdb.findById(req.params.documentId).then(search => {
+    if (search) {
+      let positiveArray = [];
+      let negativeArray = [];
+      search.results.forEach(el => {
+        if (el.sentiment == "Positive") {
+          positiveArray.push(el);
+        } else if (el.sentiment == "Negative") {
+          negativeArray.push(el);
+        }
+      })
+
+      return res.status(200).json({
+        positives: positiveArray,
+        numberOfPositives: positiveArray.length,
+        negatives: negativeArray,
+        numberOfNegatives: negativeArray.length
+      })
+    } else {
+      return res.status(404).json({
+        error: "Search not made"
+      })
+    }
+  }).catch(err => {
+    return res.status(500).json({
+      error: err.toString()
+    })
+  })
+})
+
+router.get('/instagram/alltags', isloggedin, async (req, res) => {
+
+  if (!req.token) {
+    return res.status(401).send({
+      error: "user not authorised"
+    });
   }
 
 
-    let data;
-    try{
-      data =await instagramdb.find({Author:req.body.username});
-   
-        res.send({result:data})
-    }
-    catch(e){
-      res.send({status:-1,error:e})
-  
-    }
-   
-  
-  
-  })
+  let data;
+  try {
+    data = await instagramdb.find({
+      Author: req.body.username
+    });
 
+    res.send({
+      result: data
+    })
+  } catch (e) {
+    res.send({
+      status: -1,
+      error: e
+    })
 
-
-
-  //COMMENTS
-  router.get('/instagram/comments/:documentId/status',isloggedin,async (req,res)=>{
-
-    if (!req.token) {
-      return res.status(401).send({
-          error: "user not authorised"
-      });
   }
 
-    let documenID=req.params.documentId;
-    let data;
-    try{
-      data =await instagramdb.findById(documenID);
-      console.log(data)
-      if(data.status==1){
-        res.send({status:data.status,result:data})
-      }
-      else{
-        res.send({status:0})
-  
-      }
+
+
+})
+
+
+
+
+//COMMENTS
+router.get('/instagram/comments/:documentId/status', isloggedin, async (req, res) => {
+
+  if (!req.token) {
+    return res.status(401).send({
+      error: "user not authorised"
+    });
+  }
+
+  let documenID = req.params.documentId;
+  let data;
+  try {
+    data = await instagramdb.findById(documenID);
+    console.log(data)
+    if (data.status == 1) {
+      res.send({
+        status: data.status,
+        result: data
+      })
+    } else {
+      res.send({
+        status: 0
+      })
+
     }
-    catch(e){
-      res.send({status:-1,error:e})
-  
-    }
-   
-  
-  })
+  } catch (e) {
+    res.send({
+      status: -1,
+      error: e
+    })
+
+  }
+
+
+})
 
 
 module.exports = router

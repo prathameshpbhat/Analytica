@@ -14,7 +14,6 @@ app.use(express.urlencoded({
 
 //ROUTES
 const login_route = require('./routes/login')
-const test = require('./routes/test')
 
 
 const twitterDB = require('./routes/twitterapi/database/twitterdb')
@@ -30,7 +29,6 @@ const instagramdb = require('./routes/instagramapi/instagramdb')
 //
 
 app.use(login_route)
-app.use(test)
 
 app.use(twitterDB);
 app.use(twitter_authRoute);

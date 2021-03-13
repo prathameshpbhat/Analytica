@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const axios = require("axios");
-const Search = require('../../models/search');
+const twitter_search = require('../../models/twitter');
 const isLoggedIn = require("../../middleware/isloggedin")
 
 
 router.post('/analytica/twitter/search', isLoggedIn, async (req, res) => {
-
-
     if (!req.token) {
         return res.status(401).send({
             error: "user not authorised"
@@ -24,7 +22,8 @@ router.post('/analytica/twitter/search', isLoggedIn, async (req, res) => {
     try {
         let request_payload = {
             query: search_query,
-            mode: 1
+            mode: 1,
+            Author: req.body.user
         }
         let response = await axios.post(url, request_payload, config);
 
@@ -45,8 +44,8 @@ router.post('/analytica/twitter/search', isLoggedIn, async (req, res) => {
     }
 })
 
-router.get('/analytica/twitter/search/status', (req, res) => {
-    Search.findById(req.query.documentId).then(search => {
+router.get('/analytica/twitter/search/status', async (req, res) => {
+    twitter_search.findById(req.query.documentId).then(search => {
         if (search) {
             if (search.status == 0) {
                 return res.status(204).send();
@@ -68,10 +67,23 @@ router.get('/analytica/twitter/search/status', (req, res) => {
 })
 
 router.get('/analytica/twitter/search/download', (req, res) => {
-    Search.findById(req.query.documentId).then(search => {
+    twitter_search.findById(req.body.documentId).then(search => {
         if (search) {
+            let positiveArray = [];
+            let negativeArray = [];
+            search.results.forEach(el => {
+                if (el.sentiment == "Positive") {
+                    positiveArray.push(el);
+                } else if (el.sentiment == "Negative") {
+                    negativeArray.push(el);
+                }
+            })
+
             return res.status(200).json({
-                Result: search.results
+                positives: positiveArray,
+                numberOfPositives: positiveArray.length,
+                negatives: negativeArray,
+                numberOfNegatives: negativeArray.length
             })
         } else {
             return res.status(404).json({
@@ -84,5 +96,16 @@ router.get('/analytica/twitter/search/download', (req, res) => {
         })
     })
 })
+
+
+router.get('/analytica/twitter/search/adds', async (req, res) => {
+    let r = await new twitter_search({
+        status: "0",
+        query: "india"
+    }).save();
+    res.send(r);
+
+})
+
 
 module.exports = router;
