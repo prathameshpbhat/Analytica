@@ -5,12 +5,12 @@ const twitter_search = require('../../models/twitter');
 const isLoggedIn = require("../../middleware/isloggedin")
 
 
-router.post('/analytica/twitter/search', isLoggedIn, async (req, res) => {
-    if (!req.token) {
-        return res.status(401).send({
-            error: "user not authorised"
-        });
-    }
+router.post('/analytica/twitter/search', async (req, res) => {
+    // if (!req.token) {
+    //     return res.status(401).send({
+    //         error: "user not authorised"
+    //     });
+    // }
 
     const search_query = req.body.search_query;
     const config = {
