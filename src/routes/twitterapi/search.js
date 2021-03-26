@@ -45,7 +45,7 @@ router.post('/analytica/twitter/search', isLoggedIn, async (req, res) => {
 })
 
 router.get('/analytica/twitter/search/status', async (req, res) => {
-    twitter_search.findById(req.query.documentId).then(search => {
+   await twitter_search.findById(req.query.documentId).then(search => {
         if (search) {
             if (search.status == 0) {
                 return res.status(204).send();
