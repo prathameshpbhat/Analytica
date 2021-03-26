@@ -24,6 +24,7 @@ route.post('/Analytica/users/Register',async (req,res)=>{
             })
         }
         catch(e){
+            console.log(req.body.Email)
             console.log(e)
             res.status(400).json({
                 Error:'User with Id Already exits'
