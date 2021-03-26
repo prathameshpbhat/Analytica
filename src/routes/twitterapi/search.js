@@ -67,7 +67,7 @@ router.get('/analytica/twitter/search/status', async (req, res) => {
 })
 
 router.get('/analytica/twitter/search/download', (req, res) => {
-    twitter_search.findById(req.body.documentId).then(search => {
+    twitter_search.findById(req.query.documentId).then(search => {
         if (search) {
             let positiveArray = [];
             let negativeArray = [];
