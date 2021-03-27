@@ -11,13 +11,13 @@ router.post(
 );
 
 router.get(
-  "/analytica/twitter/search/status",
+  "/analytica/twitter/search/status/:documentId",
   isLoggedIn,
   searchController.checkSearchStatus
 );
 
 router.get(
-  "/analytica/twitter/search/download",
+  "/analytica/twitter/search/download/:documentId",
   isLoggedIn,
   searchController.downloadSearchResults
 );

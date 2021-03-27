@@ -78,14 +78,14 @@ router.post(
 
 // RETURN STATUS OF RESPONSE (POLLING)
 router.get(
-  "/analytica/twitter/personal/tweets/status",
+  "/analytica/twitter/personal/tweets/status/:documentId",
   isloggedin,
   tweetsController.checkStatusOfUserTweets
 );
 
 // DOWNLOAD THE COMPLETE RESPONSE
 router.get(
-  "/analytica/twitter/personal/tweets/download",
+  "/analytica/twitter/personal/tweets/download/:documentId",
   isloggedin,
   tweetsController.downloadUserTweets
 );
