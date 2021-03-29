@@ -29,7 +29,7 @@ const twitter_trends = require('./routes/twitterapi/trends')
 
 const instagramRoute = require('./routes/instagramapi/instagram')
 const instagramdb = require('./routes/instagramapi/instagramdb')
-
+const instagramAnalysis = require('./routes/instagramapi/instagramAnalysis')
 //
 
 app.use(login_route)
@@ -43,7 +43,7 @@ app.use(twitter_trends);
 
 app.use(instagramdb)
 app.use(instagramRoute)
-
+app.use(instagramAnalysis)
 
 app.listen(PORT, () => {
   console.log('server started')

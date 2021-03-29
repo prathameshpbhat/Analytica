@@ -8,7 +8,7 @@ const instagramdb = require('../../models/instagram')
 const instagramCommentDb = require('../../models/instagramcommentschema')
 
 
-router.post('/instagram/tags/:documentId/status', isloggedin, async (req, res) => {
+router.post('/analytica/instagram/tags/:documentId/status', isloggedin, async (req, res) => {
 
   if (!req.token) {
     return res.status(401).send({
@@ -37,7 +37,7 @@ router.post('/instagram/tags/:documentId/status', isloggedin, async (req, res) =
   }
 })
 
-router.get('/instagram/tags/:documentId/download', (req, res) => {
+router.get('/analytica/instagram/tags/:documentId/download', (req, res) => {
   instagramdb.findById(req.params.documentId).then(search => {
     if (search) {
       let positiveArray = [];
@@ -68,7 +68,7 @@ router.get('/instagram/tags/:documentId/download', (req, res) => {
   })
 })
 
-router.get('/instagram/alltags', isloggedin, async (req, res) => {
+router.get('/analytica/instagram/alltags', isloggedin, async (req, res) => {
 
   if (!req.token) {
     return res.status(401).send({
@@ -102,7 +102,7 @@ router.get('/instagram/alltags', isloggedin, async (req, res) => {
 
 
 //COMMENTS
-router.get('/instagram/comments/:documentId/status', isloggedin, async (req, res) => {
+router.get('/analytica/instagram/comments/:documentId/status', isloggedin, async (req, res) => {
 
   if (!req.token) {
     return res.status(401).send({

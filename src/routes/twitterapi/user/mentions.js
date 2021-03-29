@@ -1,79 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
-const isloggedin = require('../../../middleware/isloggedin');
+const isLoggedIn = require('../../../middleware/isloggedin');
 
-const config = {
-    headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BEARER_TOKEN}`
-    }
-}
+const mentionsController = require('../../../controllers/twitter/user/mentions.controller');
 
-router.get('/analytica/twitter/personal/:userid/mentions',isloggedin, async (req, res) => {
-    if (!req.token) {
-        return res.status(401).send({
-            error: "user not authorised"
-        });
-    }
+router.get('/analytica/twitter/personal/:userid/mentions', isLoggedIn, mentionsController.getAllMentions);
 
-    try {
-        let count = 0;
-        let api_endpoint = `https://api.twitter.com/2/users/${req.params.userid}/mentions?max_results=100&media.fields=public_metrics&tweet.fields=public_metrics,created_at`
-        let response = await axios.get(api_endpoint, config);
-        let mentions = response.data.data;
-        let all_mentions = mentions;
-        let next_token = response.data.meta.next_token;
-        while (next_token) {
-            response = await axios.get(`${api_endpoint}&pagination_token=${next_token}`, config)
-            mentions = response.data.data;
-            all_mentions = all_mentions.concat(mentions);
-            next_token = response.data.meta.next_token;
-        }
-        for (tweet in all_mentions) {
-            count++;
-        }
-        return res.status(200).json({
-            all_mentions
-        });
-    } catch (error) {
-        return res.status(400).json(error);
-    }
-});
-
-router.get('/analytica/twitter/personal/:userid/mentions/today',isloggedin, async (req, res) => {
-    if (!req.token) {
-        return res.status(401).send({
-            error: "user not authorised"
-        });
-    }
-
-    try {
-        let count = 0;
-        let d = new Date();
-        d.setHours(0, 0, 0, 0);
-        d = d.toISOString()
-
-        let api_endpoint = `https://api.twitter.com/2/users/${req.params.userid}/mentions?max_results=100&start_time=${d}&media.fields=public_metrics&tweet.fields=public_metrics,created_at`
-        let response = await axios.get(api_endpoint, config);
-        let mentions = response.data.data;
-        let all_mentions = mentions;
-        let next_token = response.data.meta.next_token;
-        while (next_token) {
-            response = await axios.get(`${api_endpoint}&pagination_token=${next_token}`, config)
-            mentions = response.data.data;
-            all_mentions = all_mentions.concat(mentions);
-            next_token = response.data.meta.next_token;
-        }
-        for (tweet in all_mentions) {
-            count++;
-        }
-        return res.status(200).json({
-            all_mentions
-        });
-    } catch (error) {
-        return res.status(400).json(error);
-    }
-});
+router.get('/analytica/twitter/personal/:userid/mentions/today', isLoggedIn, mentionsController.getTodaysMentions);
 
 module.exports = router;
