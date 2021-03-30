@@ -43,11 +43,6 @@ router.post('/analytica/instagram/search/:tag', isloggedin, async (req, res) => 
 })
 
 router.get('/analytica/instagram/real/tags/:tag', async (req, res) => {
-    if (!req.token) {
-      return res.status(401).send({
-        error: "user not authorised"
-      });
-    }
 
 
 

@@ -15,17 +15,18 @@ const instagramAnalytics = require('instagram-analytics');
 
 router.get('/analytica/analysis/profile/:id', async (req, res) => {
     let username=req.params.id;
-    try{
+    //changes with  instagram-analytics
+    // try{
         let analysedDetails= await instagramAnalytics(username)
         res.status(200).send({
             details:analysedDetails
         })
-    }
-    catch(e){
-        res.send({
-            'error':e
-        })
-    }
+    // }
+    // catch(e){
+    //     res.send({
+    //         'error':e
+    //     })
+    // }
 
 
 
