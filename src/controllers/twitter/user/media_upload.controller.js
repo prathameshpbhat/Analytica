@@ -1,6 +1,6 @@
 const axios = require("axios");
 const fs = require("fs");
-const oauth = require(`../../../libs/oauthv1`);
+const oauth = require(`../../../helpers/oauthv1`);
 const path = require("path");
 const multer = require("multer");
 
