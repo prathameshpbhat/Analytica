@@ -153,27 +153,32 @@ router.post('/analytica/analysis/profile/engagement/:id', async (req,res)=>{
 router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
   username ="gowithbang2"
   const client = new Instagram({ username, password })
+  await client.login()
   const activity = await client.getActivity()
   res.status(200).json(activity)
 
 })
 
 
-router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
+// router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
 
-    const client = new Instagram({ username, password })
-    const activity = await client.getActivity()
-    res.status(200).json(activity)
+//     const client = new Instagram({ username, password })
+//     await client.login()
+//     const activity = await client.getActivity()
+//     res.status(200).json(activity)
   
-  })
+//   })
 
   router.post('/analytica/analysis/profile/getsimilarcharacters/:id',async (req,res)=>{
     username ="gowithbang2"
     const client = new Instagram({ username, password })
-    let userid=req.params.id
-    console.log(userid)
+    await client.login()
+    const instagram = await client.getUserByUsername({ username: req.params.id})
 
-   const result= await client.getChainsData({ userid })
+    let userId =instagram.id
+    console.log("here"+userId)
+
+   const result= await client.getChainsData({ userId  })
     // const activity = await client.getActivity()
     res.status(200).json(result)
 
