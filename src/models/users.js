@@ -19,8 +19,19 @@ const userSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
+  instagram: {
+    username: {
+      type: String,
+    },
+    password: {
+      type: String,
+    },
+  },
   twitter: {
     user_details: {},
+    access_jwt: {
+      type: String,
+    },
     searches: [
       {
         type: mongoose.Schema.Types.ObjectId,

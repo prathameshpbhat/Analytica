@@ -260,24 +260,26 @@ const getLikeList = async (req, res) => {
   try {
     let count = 0;
     const api_endpoint = `https://api.twitter.com/1.1/favorites/list.json`;
-    const api_parameters = `?count=200`;
     // const oauth_token = req.query.oauth_token;
     // const oauth_token_secret = req.query.oauth_token_secret;
+    const params = {
+      count: 200,
+    };
     const options = {
       method: "GET",
       url: api_endpoint,
-      params: {
-        count: "200",
-      },
+      params: params,
       // oauth_token: oauth_token,
       // oauth_token_secret: oauth_token_secret
     };
-    const response = await axios.get(`${api_endpoint}${api_parameters}`, {
+    const config = {
+      params: params,
       headers: {
         "Content-Type": "application/json",
         Authorization: oauth.generateAuthHeader(options),
       },
-    });
+    };
+    const response = await axios.get(api_endpoint, config);
     const tweets = response.data;
 
     for (tweet in tweets) {
@@ -290,7 +292,7 @@ const getLikeList = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(400).json(error.toString());
+      throw new Error(error);
     }
   }
 };

@@ -32,7 +32,7 @@ const verifyLogin = async (req, res) => {
     };
     const response = await axios.get(api_endpoint, headers);
     let userData = response.data;
-    const updatedUser = await User.findOneAndUpdate(
+    let updatedUser = await User.findOneAndUpdate(
       {
         _id: req.user._id,
       },
@@ -42,7 +42,23 @@ const verifyLogin = async (req, res) => {
         },
       }
     );
-    res.status(200).json({
+
+    const token = await jwt.sign(
+      {
+        oauth_token: req.query.oauth_token,
+        oauth_token_secret: req.query.oauth_token_secret,
+      },
+      process.env.JWTTOKEN
+    );
+    updatedUser = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: {
+          "twitter.access_jwt": token,
+        },
+      }
+    );
+    return res.status(200).json({
       user_details: updatedUser.twitter.user_details,
     });
   } catch (error) {
