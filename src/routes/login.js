@@ -27,7 +27,7 @@ route.post("/Analytica/users/Register", async (req, res) => {
   }
 });
 
-route.get("/Analytica/users/Login", async (req, res) => {
+route.post("/Analytica/users/Login", async (req, res) => {
   try {
     const user = await USER.FindUserByCredential(
       req.body.Email,

@@ -12,7 +12,7 @@ const auth = async function (req, res, next) {
       "tokens.token": token,
     });
     if (!user) {
-      res.status(401).json({
+      return res.status(401).json({
         status: "Authenticate User",
       });
     }

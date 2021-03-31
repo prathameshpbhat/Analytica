@@ -5,6 +5,9 @@ const UserTweets = require("../../../models/twitter/user_tweets");
 
 const User = require("../../../models/users");
 
+const userTweetsHelper = require("../../../helpers/user_tweets");
+const { use } = require("../../../routes/twitterapi/user/tweets");
+
 const makeTweet = async (req, res) => {
   try {
     // const oauth_token = req.body.oauth_token;
@@ -294,8 +297,11 @@ const getLikeList = async (req, res) => {
 
 const requestUserTweets = async (req, res) => {
   try {
-    const userid = req.user.twitter.user_details.id_str || req.query.userid;
-    if (!userid) return res.status(404).json({ Error: "User_Id not found" });
+    const userid = req.user.twitter.user_details.id_str;
+    if (!userid)
+      return res
+        .status(404)
+        .json({ Error: "user is not logged in to twitter" });
     let documentId = "";
     const user_tweets = await UserTweets.findOne({ Author: req.user._id });
     if (user_tweets) {
@@ -321,92 +327,28 @@ const requestUserTweets = async (req, res) => {
       );
       documentId = newUserTweets._id;
     }
-
+    let all_tweets = [];
+    let non_public_tweets = await userTweetsHelper.getNonPublicTweets(userid);
+    let last_non_public_tweet_date = "";
+    if (non_public_tweets)
+      last_non_public_tweet_date =
+        non_public_tweets[non_public_tweets.length - 1].created_at;
+    all_tweets = all_tweets.concat(non_public_tweets);
+    let public_tweets = await userTweetsHelper.getPublicTweets(userid);
+    public_tweets.oldest_date = last_non_public_tweet_date;
+    public_tweets = public_tweets.filter(userTweetsHelper.removeOlderTweets);
+    delete public_tweets["oldest_date"];
+    all_tweets = all_tweets.concat(public_tweets);
+    const count = all_tweets.length;
     res.status(202).json({
       status: "The request has been accepted. Please wait",
       documentId: documentId,
     });
-
-    let count = 0;
-    const api_endpoint = `https://api.twitter.com/2/users/${userid}/tweets`;
-    // const oauth_token = req.body.oauth_token;
-    // const oauth_token_secret = req.body.oauth_token_secret;
-    let params = {
-      expansions: "in_reply_to_user_id,referenced_tweets.id",
-      max_results: "100",
-      "tweet.fields": "public_metrics,created_at,conversation_id",
-    };
-    const options = {
-      method: "GET",
-      url: api_endpoint,
-      params: params,
-      // oauth_token: oauth_token,
-      // oauth_token_secret: oauth_token_secret
-    };
-    const config = {
-      params: params,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: oauth.generateAuthHeader(options),
-      },
-    };
-    let response = await axios.get(api_endpoint, config);
-    let tweets = response.data.data;
-    let all_tweets = tweets;
-    let next_token = response.data.meta.next_token;
-    while (next_token) {
-      params.pagination_token = next_token;
-      const options = {
-        method: "GET",
-        url: api_endpoint,
-        params: params,
-        // oauth_token: oauth_token,
-        // oauth_token_secret: oauth_token_secret
-      };
-      const config = {
-        params: params,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: oauth.generateAuthHeader(options),
-        },
-      };
-      response = await axios.get(api_endpoint, config);
-      tweets = response.data.data;
-      all_tweets = all_tweets.concat(tweets);
-      next_token = response.data.meta.next_token;
-    }
-    if (all_tweets) {
-      all_tweets.forEach((tweet) => {
-        count++;
-        tweet.engagement =
-          tweet.public_metrics.like_count +
-          tweet.public_metrics.reply_count +
-          tweet.public_metrics.quote_count +
-          tweet.public_metrics.retweet_count;
-        tweet.engagement_rate =
-          (tweet.engagement / req.user.twitter.user_details.followers_count) *
-          100;
-        tweet.amplificaztion_rate =
-          ((tweet.public_metrics.quote_count +
-            tweet.public_metrics.retweet_count) /
-            req.user.twitter.user_details.followers_count) *
-          100;
-        tweet.applause_rate =
-          (tweet.public_metrics.like_count /
-            req.user.twitter.user_details.followers_count) *
-          100;
-        tweet.conversation_rate =
-          (tweet.public_metrics.reply_count /
-            req.user.twitter.user_details.followers_count) *
-          100;
-      });
-    }
     const updateUserTweets = {
       status: 1,
       results: all_tweets,
       count: count,
     };
-
     const updatedUserTweets = await UserTweets.findByIdAndUpdate(
       { _id: documentId },
       updateUserTweets
@@ -465,70 +407,70 @@ const downloadUserTweets = (req, res) => {
     });
 };
 
-const getTweetsMadeByUserToday = async (req, res) => {
-  try {
-    let d = new Date();
-    d.setHours(0, 0, 0, 0);
-    d = d.toISOString();
+// const getTweetsMadeByUserToday = async (req, res) => {
+//   try {
+//     let d = new Date();
+//     d.setHours(0, 0, 0, 0);
+//     d = d.toISOString();
 
-    let count = 0;
-    const api_endpoint = `https://api.twitter.com/2/users/${req.body.userid}/tweets`;
-    const api_parameters = `?exclude=retweets&start_time=${d}&max_results=100&tweet.fields=public_metrics,created_at`;
-    // const options = {
-    //     method: 'GET',
-    //     url: api_endpoint,
-    //     params: {
-    //         'exclude': 'retweets',
-    //         'start_time': d,
-    //         'max_results': '100',
-    //         'tweet.fields': 'public_metrics,created_at'
-    //     }
-    // }
-    let response = await axios.get(`${api_endpoint}${api_parameters}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
-        // Authorization: oauth.generateAuthHeader(options)
-      },
-    });
-    let tweets = response.data.data;
-    let all_tweets = tweets;
-    let next_token = response.data.meta.next_token;
-    while (next_token) {
-      response = await axios.get(
-        `${api_endpoint}${api_parameters}&pagination_token=${next_token}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
-            // Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
-            //     'exclude': 'retweets',
-            //     'start_time': d,
-            //     'max_results': '100',
-            //     'tweet.fields': 'public_metrics,created_at',
-            //     'pagination_token': next_token
-            // })
-          },
-        }
-      );
-      tweets = response.data.data;
-      all_tweets = all_tweets.concat(tweets);
-      next_token = response.data.meta.next_token;
-    }
-    for (tweet in all_tweets) {
-      count++;
-    }
-    return res.status(res.statusCode).json({
-      all_tweets,
-    });
-  } catch (error) {
-    if (error.response) {
-      return res.status(error.response.status).json(error);
-    } else {
-      return res.status(400).json(error.toString());
-    }
-  }
-};
+//     let count = 0;
+//     const api_endpoint = `https://api.twitter.com/2/users/${req.body.userid}/tweets`;
+//     const api_parameters = `?exclude=retweets&start_time=${d}&max_results=100&tweet.fields=public_metrics,created_at`;
+//     // const options = {
+//     //     method: 'GET',
+//     //     url: api_endpoint,
+//     //     params: {
+//     //         'exclude': 'retweets',
+//     //         'start_time': d,
+//     //         'max_results': '100',
+//     //         'tweet.fields': 'public_metrics,created_at'
+//     //     }
+//     // }
+//     let response = await axios.get(`${api_endpoint}${api_parameters}`, {
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
+//         // Authorization: oauth.generateAuthHeader(options)
+//       },
+//     });
+//     let tweets = response.data.data;
+//     let all_tweets = tweets;
+//     let next_token = response.data.meta.next_token;
+//     while (next_token) {
+//       response = await axios.get(
+//         `${api_endpoint}${api_parameters}&pagination_token=${next_token}`,
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
+//             // Authorization: oauth.generateAuthHeader('GET', api_endpoint, {
+//             //     'exclude': 'retweets',
+//             //     'start_time': d,
+//             //     'max_results': '100',
+//             //     'tweet.fields': 'public_metrics,created_at',
+//             //     'pagination_token': next_token
+//             // })
+//           },
+//         }
+//       );
+//       tweets = response.data.data;
+//       all_tweets = all_tweets.concat(tweets);
+//       next_token = response.data.meta.next_token;
+//     }
+//     for (tweet in all_tweets) {
+//       count++;
+//     }
+//     return res.status(res.statusCode).json({
+//       all_tweets,
+//     });
+//   } catch (error) {
+//     if (error.response) {
+//       return res.status(error.response.status).json(error);
+//     } else {
+//       return res.status(400).json(error.toString());
+//     }
+//   }
+// };
 
 module.exports = {
   makeTweet,
@@ -542,5 +484,5 @@ module.exports = {
   requestUserTweets,
   checkStatusOfUserTweets,
   downloadUserTweets,
-  getTweetsMadeByUserToday,
+  // getTweetsMadeByUserToday,
 };

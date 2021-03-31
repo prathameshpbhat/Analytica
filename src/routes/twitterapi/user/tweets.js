@@ -91,10 +91,10 @@ router.get(
 );
 
 // GET TWEETS MADE TODAY
-router.get(
-  "/analytica/twitter/personal/tweets/today",
-  isAuth,
-  tweetsController.getTweetsMadeByUserToday
-);
+// router.get(
+//   "/analytica/twitter/personal/tweets/today",
+//   isAuth,
+//   tweetsController.getTweetsMadeByUserToday
+// );
 
 module.exports = router;

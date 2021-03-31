@@ -13,7 +13,7 @@ const instagramdb = require('../../models/instagram')
 const instagramAnalytics = require('instagram-analytics');
 
 
-router.post('/analytica/instagram/search/:tag', isloggedin, async (req, res) => {
+router.post('/analytica/instagram/search/:tag', async (req, res) => {
   var tag = req.params.tag;
 
   try {
