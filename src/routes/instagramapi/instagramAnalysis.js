@@ -15,7 +15,9 @@ const instagramdb = require('../../models/instagram')
 router.get('/analytica/analysis/profile/engagement/:id', async (req, res) => {
     let username=req.params.id;
  
-        let userProfile=await InstaClient.getProfile(username)
+    try{
+
+      let userProfile=await InstaClient.getProfile(username)
         let likes=0,comments=0,followers=0,posts=0;
         posts=userProfile.posts;
         followers=userProfile.followers
@@ -63,7 +65,12 @@ router.get('/analytica/analysis/profile/engagement/:id', async (req, res) => {
             postdates:postdates,
             postLikes:postLikes,
         })
-
+    }
+     catch(e){
+         res.status(400).send({
+             Error:'User noot Found|Limit reached'
+         })
+     }
 
 
 
