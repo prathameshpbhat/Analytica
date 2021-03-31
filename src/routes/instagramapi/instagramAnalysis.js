@@ -78,70 +78,107 @@ let  password  = process.env.password
 
 
 // })
-router.get('/analytica/analysis/profile/engagement/:id', async (req,res)=>{
+router.post('/analytica/analysis/profile/engagement/:id', async (req,res)=>{
 
+  username ="gowithbang2"
 
-  let username="gowithbang2"
-  const client = new Instagram({ username, password })
-  console.log(username+"  "+password)
-  await client.login()
-  const instagram = await client.getUserByUsername({ username: req.params.id})
-  // const me = await client.getUserByUsername({ username: client.credentials.username })
-  let likes=0,comments=0,followers=0,posts=0;
-        posts=instagram.edge_owner_to_timeline_media.count;
-        followers=instagram.edge_followed_by.count
-        let freq=0;
-        let lastpost
-        let postdates=[]
-        let postLikes=[]
-
-        instagram.edge_owner_to_timeline_media.edges.forEach((e,i)=>{
-            likes+=e.node.edge_liked_by.count,
-            comments+=e.node.edge_media_to_comment.count
-      
-          var theDate = new Date(e.node.taken_at_timestamp * 1000);
-                dateString = theDate.toGMTString();
-                postdates.push(dateString)
-                postLikes.push(e.node.edge_liked_by.count)
-
-            if(i==0){
-             lastpost=e
-               
-            }
-            else{
-                freq+=(lastpost.node.taken_at_timestamp-e.node.taken_at_timestamp)
-               
-            }
-            lastpost=e
-
-
-        })
-        if(  instagram.edge_owner_to_timeline_media.edges.length!=0){
-            freq=1/((((freq/60)/60)/24)/instagram.edge_owner_to_timeline_media.edges.length)
-        }
-     
-
+  try{
+    const client = new Instagram({ username, password })
+    console.log(username+"  "+password)
+    await client.login()
+    const instagram = await client.getUserByUsername({ username: req.params.id})
+    // const me = await client.getUserByUsername({ username: client.credentials.username })
+    let likes=0,comments=0,followers=0,posts=0;
+          posts=instagram.edge_owner_to_timeline_media.count;
+          followers=instagram.edge_followed_by.count
+          let freq=0;
+          let lastpost
+          let postdates=[]
+          let postLikes=[]
+  
+          instagram.edge_owner_to_timeline_media.edges.forEach((e,i)=>{
+              likes+=e.node.edge_liked_by.count,
+              comments+=e.node.edge_media_to_comment.count
         
-        let engagement=(((likes+comments)/posts)/followers)
-        console.log(posts)
-        res.status(200).json({
-            engagement:engagement,
-            likes:likes,
-            comments:comments,
-            posts:posts,
-            followers:followers,
-            postFrequency:freq,
-            postdates:postdates,
-            postLikes:postLikes,
-        })
+            var theDate = new Date(e.node.taken_at_timestamp * 1000);
+                  dateString = theDate.toGMTString();
+                  postdates.push(dateString)
+                  postLikes.push(e.node.edge_liked_by.count)
+  
+              if(i==0){
+               lastpost=e
+                 
+              }
+              else{
+                  freq+=(lastpost.node.taken_at_timestamp-e.node.taken_at_timestamp)
+                 
+              }
+              lastpost=e
+  
+  
+          })
+          if(  instagram.edge_owner_to_timeline_media.edges.length!=0){
+              freq=1/((((freq/60)/60)/24)/instagram.edge_owner_to_timeline_media.edges.length)
+          }
+       
+  
+          
+          let engagement=(((likes+comments)/posts)/followers)
+          console.log(posts)
+          res.status(200).json({
+              engagement:engagement,
+              likes:likes,
+              comments:comments,
+              posts:posts,
+              followers:followers,
+              postFrequency:freq,
+              postdates:postdates,
+              postLikes:postLikes,
+          })
+  
+  }
+  catch(e){
+    console.log(e)
+    res.status(e.statusCode).json({
+      'Error':e
+    })
+  }
 
+ 
    
 
   
   
 })
+router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
+  username ="gowithbang2"
+  const client = new Instagram({ username, password })
+  const activity = await client.getActivity()
+  res.status(200).json(activity)
+
+})
 
 
+router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
+
+    const client = new Instagram({ username, password })
+    const activity = await client.getActivity()
+    res.status(200).json(activity)
+  
+  })
+
+  router.post('/analytica/analysis/profile/getsimilarcharacters/:id',async (req,res)=>{
+    username ="gowithbang2"
+    const client = new Instagram({ username, password })
+    let userid=req.params.id
+    console.log(userid)
+
+   const result= await client.getChainsData({ userid })
+    // const activity = await client.getActivity()
+    res.status(200).json(result)
+
+  
+  })
 // router.get('/checker/analytica/analysis/profile/engagement/:id', async (req,res)=>{
 
 
