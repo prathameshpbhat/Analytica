@@ -32,7 +32,7 @@ const verifyLogin = async (req, res) => {
     };
     const response = await axios.get(api_endpoint, headers);
     let userData = response.data;
-    const updatedUser = await User.updateOne(
+    const updatedUser = await User.findOneAndUpdate(
       {
         _id: req.user._id,
       },
@@ -47,9 +47,10 @@ const verifyLogin = async (req, res) => {
     });
   } catch (error) {
     if (error.response) {
+      console.log(error);
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(500).json(error.toString());
+      throw new Error(error);
     }
   }
 };
@@ -65,7 +66,7 @@ const loginCallback = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(400).json(error.toString());
+      throw new Error(error);
     }
   }
 };
@@ -98,7 +99,7 @@ const startLogin = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(500).json(error.toString());
+      throw new Error(error);
     }
   }
 };

@@ -1,24 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const isLoggedIn = require("../../middleware/auth");
+const isAuth = require("../../middleware/auth");
 
 const searchController = require("../../controllers/twitter/search.controller");
 
-router.post(
-  "/analytica/twitter/search",
-  isLoggedIn,
-  searchController.startSearch
-);
+router.post("/analytica/twitter/search", isAuth, searchController.startSearch);
 
 router.get(
   "/analytica/twitter/search/status/:documentId",
-  isLoggedIn,
+  isAuth,
   searchController.checkSearchStatus
 );
 
 router.get(
   "/analytica/twitter/search/download/:documentId",
-  isLoggedIn,
+  isAuth,
   searchController.downloadSearchResults
 );
 

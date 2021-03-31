@@ -1,18 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const isLoggedIn = require("../../../middleware/isloggedin");
+const isAuth = require("../../../middleware/auth");
 
 const mentionsController = require("../../../controllers/twitter/user/mentions.controller");
 
 router.get(
   "/analytica/twitter/personal/:userid/mentions",
-  isLoggedIn,
+  isAuth,
   mentionsController.getAllMentions
 );
 
 router.get(
   "/analytica/twitter/personal/:userid/mentions/today",
-  isLoggedIn,
+  isAuth,
   mentionsController.getTodaysMentions
 );
 
