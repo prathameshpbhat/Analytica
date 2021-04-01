@@ -54,7 +54,7 @@ router.post('/analytica/instagram/real/tags/:tag',isAuth, async (req, res) => {
 
 
 
-      res.status(202).send(result)
+      res.status(202).json(result)
     } catch (e) {
       res.send(e)
     }
