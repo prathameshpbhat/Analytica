@@ -12,21 +12,44 @@ const router = express.Router();
 const instagramdb = require('../../models/instagram')
 const instagramAnalytics = require('instagram-analytics');
 
+const Instagram = require("instagram-web-api");
+const e = require('express');
+let username = process.env.username;
+let password = process.env.password;
 
 router.post('/analytica/instagram/search/:tag', async (req, res) => {
   var tag = req.params.tag;
 
   try {
-
-    const result = await InstaClient.getHashtagPosts(tag, 100)
+    let count=0,rc=0;
+    username = "gowithbang2";
+    const client = new Instagram({ username, password });
+    const result = await client.getMediaFeedByHashtag({ hashtag: tag,first:150 })
     let array1 = [];
-    console.log(req.body.user);
+    result.edge_hashtag_to_media.edges.forEach((e)=>{
+      count++
+      if(e.node.edge_media_to_caption.edges[0]){
+        let obj={
+          caption:e.node.edge_media_to_caption.edges[0].node.text
+        }
+        array1.push(obj)
+      }
+  
+    })
+  
+    
+// rc=array1.length
+//     console.log(req.body.user);
+//     res.send({
+//       result,
+//       rc,
+//     })
 
     let response = await axios.post('https://sentiment-analysis-micro.herokuapp.com/insta-search', {
 
 
       Author: req.body.user,
-      results: result,
+      results: array1,
       query: tag
 
 
@@ -48,36 +71,43 @@ router.get('/analytica/instagram/real/tags/:tag', async (req, res) => {
 
     var tag = req.params.tag;
     console.log(tag)
-    // try {
+    try {
 
-      const result = await InstaClient.getHashtag(tag)
+      username = "gowithbang2";
+      const client = new Instagram({ username, password });
+      const result = await client.getMediaFeedByHashtag({ hashtag: tag,first:150 })
 
 console.log(result)
 
       res.status(202).json(result)
-    // } catch (e) {
-    //   res.send(e)
-    // }
+    } catch (e) {
+      res.send(e)
+    }
   }
 
 )
 
-router.post('/analytica/instagram/comments/:id', isloggedin, async (req, res) => {
-  if (!req.token) {
-    return res.status(401).send({
-      error: "user not authorised"
-    });
-  }
+router.post('/analytica/instagram/comments/:id', async (req, res) => {
 
   try {
     let tag = req.params.id;
 
-    let result = await InstaClient.getPostComments(tag, 100);
-
+    username = "gowithbang2";
+    const client = new Instagram({ username, password });
+    const result = await client.getMediaComments({ shortcode: tag})
+let array1=[]
+result.edges.forEach((e)=>{
+  if(e.node){
+    let obj={
+      content:e.node.text
+    }
+    array1.push(obj)
+  }
+})
     let response = await axios.post('https://sentiment-analysis-micro.herokuapp.com/insta-comment', {
 
       Author: req.body.user,
-      results: result,
+      results: array1,
 
       shortcode: tag
 
@@ -103,7 +133,9 @@ router.get('/analytica/instagram/real/comments/:id', async (req, res) => {
     console.log(tag)
     try {
 
-      const result = await InstaClient.getPostComments(tag, 100)
+      username = "gowithbang2";
+      const client = new Instagram({ username, password });
+      const result = await client.getMediaComments({ shortcode: tag})
 
 
 
@@ -118,8 +150,12 @@ router.get('/analytica/instagram/real/comments/:id', async (req, res) => {
 
 router.get('/analytica/instagram/profile/:id',async(req,res)=>{
   try{
-    let username=req.params.id;
-    let profile= await InstaClient.getProfile(username);
+    username = "gowithbang2";
+    let usernameID=req.params.id;
+    const client = new Instagram({ username, password });
+
+    let profile=await client.getUserByUsername({ username:usernameID })
+    res.status(200).json(profile)
   }
   catch(e){
     res.status(400).send({
