@@ -86,7 +86,7 @@ router.post('/analytica/instagram/search/:tag', async (req, res) => {
   
 })
 
-router.get('/analytica/instagram/real/tags/:tag', async (req, res) => {
+router.get('/analytica/instagram/real/tags/:tag',isAuth, async (req, res) => {
 
 
 

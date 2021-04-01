@@ -29,12 +29,18 @@ router.post('/analytica/instagram/tags/:documentId/status', isloggedin, async (r
     } else {
       return res.status(204).send();
     }
-  } catch (e) {
-    res.send({
-      error: e
-    })
-
   }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
 })
 
 router.get('/analytica/instagram/tags/:documentId/download', (req, res) => {
@@ -86,13 +92,18 @@ router.get('/analytica/instagram/alltags', isloggedin, async (req, res) => {
     res.send({
       result: data
     })
-  } catch (e) {
-    res.send({
-      status: -1,
-      error: e
-    })
-
   }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
 
 
 
@@ -126,13 +137,18 @@ router.get('/analytica/instagram/comments/:documentId/status', isloggedin, async
       })
 
     }
-  } catch (e) {
-    res.send({
-      status: -1,
-      error: e
-    })
-
   }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
 
 
 })

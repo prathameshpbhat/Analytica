@@ -129,12 +129,18 @@ router.post("/analytica/analysis/profile/engagement/:id", async (req, res) => {
       postdates: postdates,
       postLikes: postLikes,
     });
-  } catch (e) {
-    console.log(e);
-    res.status(e.statusCode).json({
-      Error: e,
-    });
   }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
 
  
    
@@ -151,11 +157,17 @@ router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
   await client.login()
   const activity = await client.getActivity()
   res.status(200).json(activity)
-  }
-  catch(e){
-    res.status(e.statusCode).json({
-      
+}
+catch(e){
+  if(e.status){
+    res.status(e.status).json({
+      'error':e,
     })
+    return;
+  }
+  res.status(400).json({
+    'error':e,
+  })
   }
 })
 
