@@ -14,7 +14,8 @@ const computeTotals = (tweets) => {
     total_engagement += tweet.engagement;
     if (tweet.non_public_metrics) {
       total_impressions += tweet.non_public_metrics.impression_count;
-      total_url_link_clicks += tweet.non_public_metrics.url_link_clicks;
+      if (tweet.non_public_metrics.url_link_clicks)
+        total_url_link_clicks += tweet.non_public_metrics.url_link_clicks;
     }
   });
 
@@ -34,7 +35,6 @@ const computeTotals = (tweets) => {
       total_replies: total_replies,
       total_retweets: total_retweets,
       total_quotes: total_quotes,
-      total_engagement: total_engagement,
     };
   }
 };

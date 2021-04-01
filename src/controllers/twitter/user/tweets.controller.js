@@ -338,16 +338,17 @@ const requestUserTweets = async (req, res) => {
     }
     let all_tweets = [];
     let non_public_tweets = await userTweetsHelper.getNonPublicTweets(userid);
+    let public_tweets = await userTweetsHelper.getPublicTweets(userid);
     let last_non_public_tweet_date = "";
-    if (non_public_tweets)
+    if (non_public_tweets) {
       last_non_public_tweet_date =
         non_public_tweets[non_public_tweets.length - 1].created_at;
-    all_tweets = all_tweets.concat(non_public_tweets);
-    let public_tweets = await userTweetsHelper.getPublicTweets(userid);
-    public_tweets.oldest_date = last_non_public_tweet_date;
-    public_tweets = public_tweets.filter(userTweetsHelper.removeOlderTweets);
-    delete public_tweets["oldest_date"];
-    all_tweets = all_tweets.concat(public_tweets);
+      all_tweets = all_tweets.concat(non_public_tweets);
+      public_tweets.oldest_date = last_non_public_tweet_date;
+      public_tweets = public_tweets.filter(userTweetsHelper.removeOlderTweets);
+      delete public_tweets["oldest_date"];
+    }
+    if (public_tweets) all_tweets = all_tweets.concat(public_tweets);
     const count = all_tweets.length;
     res.status(202).json({
       status: "The request has been accepted. Please wait",

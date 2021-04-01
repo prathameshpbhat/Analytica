@@ -8,6 +8,22 @@ Date.prototype.addDays = function (days) {
   return date;
 };
 
+const ISOtoRegular = (date) => {
+  date = new Date(date);
+  year = date.getFullYear();
+  month = date.getMonth() + 1;
+  dt = date.getDate();
+
+  if (dt < 10) {
+    dt = "0" + dt;
+  }
+  if (month < 10) {
+    month = "0" + month;
+  }
+
+  return year + "-" + month + "-" + dt;
+};
+
 const get30DayPeriod = async (req, res) => {
   try {
     const document = await User_Tweets.findOne({ Author: req.user._id });
@@ -22,7 +38,7 @@ const get30DayPeriod = async (req, res) => {
       ).toISOString()
     );
 
-    let endDate = new Date(today.addDays(1));
+    let endDate = today;
     let currentStartDate = startDate;
     let currentEndDate = new Date(currentStartDate.addDays(1));
 
@@ -32,9 +48,7 @@ const get30DayPeriod = async (req, res) => {
       let currentDateTweets = 0;
       let currentDateLikes = 0;
       let currentDateImpressions = 0;
-      const currentStartDateNonISO = currentStartDate
-        .toISOString()
-        .substring(0, 10);
+      const currentStartDateNonISO = ISOtoRegular(currentStartDate);
       if (!(currentStartDateNonISO in days)) days[currentStartDateNonISO] = {};
       tweets.forEach((tweet) => {
         const tweet_created = new Date(tweet.created_at);
@@ -42,6 +56,10 @@ const get30DayPeriod = async (req, res) => {
           tweet_created > currentStartDate &&
           tweet_created < currentEndDate
         ) {
+          console.log("yes");
+          console.log(currentStartDate);
+          console.log("currentStartDate: " + currentStartDate);
+          console.log("currentEndDate: " + currentEndDate);
           currentDateTweets++;
           currentDateLikes += tweet.public_metrics.like_count;
           currentDateImpressions += tweet.non_public_metrics.impression_count;
@@ -73,6 +91,14 @@ const getTopTweets = async (req, res) => {
       .sort((tweet1, tweet2) => tweet2.engagement - tweet1.engagement)
       .slice(0, 5);
     return res.status(200).send(topTweets);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send();
+  }
+};
+
+const getTopTweets30Days = async (req, res) => {
+  try {
   } catch (error) {
     console.log(error);
     return res.status(500).send();
@@ -132,7 +158,7 @@ const getMetrics = async (req, res) => {
 
     let response = {};
 
-    if (non_public_tweets) {
+    if (non_public_tweets.length > 0) {
       const totals30Days = analysisLib.computeTotals(non_public_tweets);
       response = {
         post_frequency: postFreq,
@@ -146,7 +172,6 @@ const getMetrics = async (req, res) => {
         total_replies_overtime: totalsOverTime.total_replies,
         total_retweets_overtime: totalsOverTime.total_retweets,
         total_quotes_overtime: totalsOverTime.total_quotes,
-        total_engagement_overtime: totalsOverTime.total_engagement,
         total_likes_30days: totals30Days.total_likes,
         total_replies_30days: totals30Days.total_replies,
         total_retweets_30days: totals30Days.total_retweets,
@@ -162,7 +187,6 @@ const getMetrics = async (req, res) => {
         total_replies_overtime: totalsOverTime.total_replies,
         total_retweets_overtime: totalsOverTime.total_retweets,
         total_quotes_overtime: totalsOverTime.total_quotes,
-        total_engagement_overtime: totalsOverTime.total_engagement,
       };
     }
 
