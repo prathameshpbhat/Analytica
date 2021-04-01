@@ -52,9 +52,9 @@ router.post('/analytica/instagram/real/tags/:tag',isAuth, async (req, res) => {
 
       const result = await InstaClient.getHashtag(tag)
 
+console.log(result)
 
-
-      res.status(202).json(result)
+      res.sendStatus(202).json(result)
     } catch (e) {
       res.send(e)
     }
