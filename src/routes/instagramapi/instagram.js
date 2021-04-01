@@ -61,9 +61,21 @@ router.post('/analytica/instagram/search/:tag', async (req, res) => {
       "status": response.data.status,
       "documentId": response.data.documentId
     })
-  } catch (e) {
-    res.send(e)
   }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
+   
+ 
+  
 })
 
 router.get('/analytica/instagram/real/tags/:tag', async (req, res) => {
@@ -82,9 +94,19 @@ router.get('/analytica/instagram/real/tags/:tag', async (req, res) => {
 console.log(result)
 
       res.status(202).json(result)
-    } catch (e) {
-      res.send(e)
     }
+    catch(e){
+      if(e.status){
+        res.status(e.status).json({
+          'error':e,
+        })
+      }
+      }
+     
+      res.status(400).json({
+        'error':e,
+      })
+    
   }
 
 )
@@ -121,10 +143,19 @@ result.edges.forEach((e)=>{
       "documentId": response.data.documentId
     })
 
-  } catch (e) {
-    res.send(e)
-
   }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
+  
 })
 
 
@@ -144,16 +175,26 @@ router.get('/analytica/instagram/real/comments/:id', async (req, res) => {
 
 
       res.status(202).send(result)
-    } catch (e) {
-      res.send(e)
     }
+    catch(e){
+      if(e.status){
+        res.status(e.status).json({
+          'error':e,
+        })
+      }
+      }
+     
+      res.status(400).json({
+        'error':e,
+      })
+    
   }
 
 )
 
 
 router.get('/analytica/instagram/profile/:id',async(req,res)=>{
-  // try{
+  try{
     username = "gowithbang2";
     let usernameID=req.params.id;
     const client = new Instagram({ username, password });
@@ -161,13 +202,68 @@ router.get('/analytica/instagram/profile/:id',async(req,res)=>{
     console.log('here')
     let profile=await client.getUserByUsername({ username:usernameID })
     res.status(200).json(profile)
-  // }
-  // catch(e){
-  //   res.status(400).send({
-  //     'error':e,
-  //   })
-  // }
+  }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
+  
 
+})
+router.get('/analytica/instagram/personalprofile',async(req,res)=>{
+  try{
+    username = "gowithbang2";
+    let usernameID=req.params.id;
+    const client = new Instagram({ username, password });
+    await client.login();
+
+    const profile = await client.getProfile()
+    res.status(200).json(profile)
+  }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
+  
+
+
+})
+router.get('/analytica/instagram/personalprofile/getfeeds',async(req,res)=>{
+  try{
+    username = "gowithbang2";
+ 
+    const client = new Instagram({ username, password });
+    await client.login();
+
+    const feeds = await client.getHome()
+    res.status(200).json(feeds)
+  }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+    }
+  
 })
 
 
