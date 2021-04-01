@@ -35,7 +35,8 @@ const makeTweet = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(500).json(error.toString());
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -94,7 +95,8 @@ const replyToTweet = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(500).json(error.toString());
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -122,7 +124,8 @@ const deleteTweet = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(400).json(error.toString());
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -150,7 +153,8 @@ const retweet = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(400).json(error.toString());
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -178,7 +182,8 @@ const unretweet = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(400).json(error.toString());
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -217,7 +222,8 @@ const likeTweet = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(400).json(error.toString());
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -250,7 +256,8 @@ const unlikeTweet = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      return res.status(400).json(error.toString());
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -291,7 +298,8 @@ const getLikeList = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).json(error);
     } else {
-      throw new Error(error);
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -358,7 +366,8 @@ const requestUserTweets = async (req, res) => {
     if (error.response) {
       return res.status(error.response.status).send(error);
     } else {
-      throw new Error(error);
+      console.log(error);
+      return res.status(500).send();
     }
   }
 };
@@ -382,9 +391,8 @@ const checkStatusOfUserTweets = async (req, res) => {
       }
     })
     .catch((err) => {
-      return res.status(500).json({
-        error: err,
-      });
+      console.log(error);
+      return res.status(500).send();
     });
 };
 
@@ -402,9 +410,8 @@ const downloadUserTweets = (req, res) => {
       }
     })
     .catch((err) => {
-      return res.status(500).json({
-        error: err,
-      });
+      console.log(error);
+      return res.status(500).send();
     });
 };
 

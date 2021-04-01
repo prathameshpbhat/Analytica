@@ -5,6 +5,7 @@ const computeTotals = (tweets) => {
   let total_quotes = 0;
   let total_impressions = 0;
   let total_url_link_clicks = 0;
+  let total_engagement = 0;
   tweets.forEach((tweet) => {
     total_likes += tweet.public_metrics.like_count;
     total_replies += tweet.public_metrics.reply_count;
@@ -16,10 +17,8 @@ const computeTotals = (tweets) => {
       total_url_link_clicks += tweet.non_public_metrics.url_link_clicks;
     }
   });
-  const total_engagement =
-    total_likes + total_replies + total_retweets + total_quotes;
 
-  if (tweet.non_public_metrics) {
+  if (tweets[0].non_public_metrics) {
     return {
       total_likes: total_likes,
       total_replies: total_replies,

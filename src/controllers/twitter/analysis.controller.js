@@ -10,7 +10,7 @@ Date.prototype.addDays = function (days) {
 
 const get30DayPeriod = async (req, res) => {
   try {
-    const document = await User_Tweets.findById(req.user._id);
+    const document = await User_Tweets.findOne({ Author: req.user._id });
     if (!document) return res.status(404).send("Document not found");
     let tweets = document.results;
     if (!tweets) return res.status(404).send("user tweets not available");
@@ -22,7 +22,7 @@ const get30DayPeriod = async (req, res) => {
       ).toISOString()
     );
 
-    let endDate = today;
+    let endDate = new Date(today.addDays(1));
     let currentStartDate = startDate;
     let currentEndDate = new Date(currentStartDate.addDays(1));
 
@@ -58,13 +58,14 @@ const get30DayPeriod = async (req, res) => {
     }
     return res.status(200).json(days);
   } catch (error) {
-    throw new Error(error);
+    console.log(error);
+    return res.status(500).send();
   }
 };
 
 const getTopTweets = async (req, res) => {
   try {
-    const document = await User_Tweets.findById(req.user._id);
+    const document = await User_Tweets.findOne({ Author: req.user._id });
     if (!document) return res.status(404).send("Document not found");
     let tweets = document.results;
     if (!tweets) return res.status(404).send("user tweets not available");
@@ -73,13 +74,14 @@ const getTopTweets = async (req, res) => {
       .slice(0, 5);
     return res.status(200).send(topTweets);
   } catch (error) {
-    throw new Error(error);
+    console.log(error);
+    return res.status(500).send();
   }
 };
 
 const getMetrics = async (req, res) => {
   try {
-    const document = await User_Tweets.findById(req.user._id);
+    const document = await User_Tweets.findOne({ Author: req.user._id });
     if (!document) return res.status(404).send("Document not found");
     let tweets = document.results;
     if (!tweets) return res.status(404).send("user tweets not available");
@@ -124,7 +126,7 @@ const getMetrics = async (req, res) => {
     const averageViralityRate30Days =
       (virality_rate30days / tweet_count30days) * 100;
 
-    const averagePostPerDay30Days = Math.floor(tweet_count30days / 30);
+    const averagePostPerDay30Days = tweet_count30days / 30;
 
     const totalsOverTime = analysisLib.computeTotals(tweets);
 
@@ -136,7 +138,7 @@ const getMetrics = async (req, res) => {
         post_frequency: postFreq,
         post_count_30days: non_public_tweets.length, //CHECK
         average_post_per_day_30Days: averagePostPerDay30Days,
-        average_engagement_rate_30days: averageEngagementRate30Days,
+        average_engagementrate_30days: averageEngagementRate30Days,
         average_clickthroughrate_30Days: averageClickThroughRate30Days,
         average_likerate_30Days: averageLikeRate30Days,
         average_viralityrate_30Days: averageViralityRate30Days,
@@ -166,7 +168,8 @@ const getMetrics = async (req, res) => {
 
     return res.status(200).send(response);
   } catch (error) {
-    throw new Error(error);
+    console.log(error);
+    return res.status(500).send();
   }
 };
 
