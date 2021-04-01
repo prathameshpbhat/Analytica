@@ -1,5 +1,6 @@
 const axios = require("axios");
-const oauth = require(`../../../helpers/oauthv1`);
+const jwt = require("jsonwebtoken");
+const oauth = require(`../../../libs/oauthv1`);
 
 const User = require("../../../models/users");
 
@@ -32,17 +33,6 @@ const verifyLogin = async (req, res) => {
     };
     const response = await axios.get(api_endpoint, headers);
     let userData = response.data;
-    let updatedUser = await User.findOneAndUpdate(
-      {
-        _id: req.user._id,
-      },
-      {
-        $set: {
-          "twitter.user_details": userData,
-        },
-      }
-    );
-
     const token = await jwt.sign(
       {
         oauth_token: req.query.oauth_token,
@@ -50,10 +40,13 @@ const verifyLogin = async (req, res) => {
       },
       process.env.JWTTOKEN
     );
-    updatedUser = await User.findOneAndUpdate(
-      { _id: req.user._id },
+    let updatedUser = await User.findOneAndUpdate(
+      {
+        _id: req.user._id,
+      },
       {
         $set: {
+          "twitter.user_details": userData,
           "twitter.access_jwt": token,
         },
       }

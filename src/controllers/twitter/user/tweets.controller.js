@@ -1,12 +1,11 @@
 const axios = require("axios");
-const oauth = require("../../../helpers/oauthv1");
+const oauth = require("../../../libs/oauthv1");
 
 const UserTweets = require("../../../models/twitter/user_tweets");
 
 const User = require("../../../models/users");
 
-const userTweetsHelper = require("../../../helpers/user_tweets");
-const { use } = require("../../../routes/twitterapi/user/tweets");
+const userTweetsHelper = require("../../../libs/user_tweets");
 
 const makeTweet = async (req, res) => {
   try {
