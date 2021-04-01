@@ -24,6 +24,7 @@ router.post('/analytica/instagram/search/:tag', async (req, res) => {
     let count=0,rc=0;
     username = "gowithbang2";
     const client = new Instagram({ username, password });
+    await client.login();
     const result = await client.getMediaFeedByHashtag({ hashtag: tag,first:150 })
     let array1 = [];
     result.edge_hashtag_to_media.edges.forEach((e)=>{
@@ -75,6 +76,7 @@ router.get('/analytica/instagram/real/tags/:tag', async (req, res) => {
 
       username = "gowithbang2";
       const client = new Instagram({ username, password });
+      await client.login();
       const result = await client.getMediaFeedByHashtag({ hashtag: tag,first:150 })
 
 console.log(result)
@@ -94,6 +96,7 @@ router.post('/analytica/instagram/comments/:id', async (req, res) => {
 
     username = "gowithbang2";
     const client = new Instagram({ username, password });
+    await client.login();
     const result = await client.getMediaComments({ shortcode: tag})
 let array1=[]
 result.edges.forEach((e)=>{
@@ -135,6 +138,7 @@ router.get('/analytica/instagram/real/comments/:id', async (req, res) => {
 
       username = "gowithbang2";
       const client = new Instagram({ username, password });
+      await client.login();
       const result = await client.getMediaComments({ shortcode: tag})
 
 
@@ -149,19 +153,20 @@ router.get('/analytica/instagram/real/comments/:id', async (req, res) => {
 
 
 router.get('/analytica/instagram/profile/:id',async(req,res)=>{
-  try{
+  // try{
     username = "gowithbang2";
     let usernameID=req.params.id;
     const client = new Instagram({ username, password });
-
+    await client.login();
+    console.log('here')
     let profile=await client.getUserByUsername({ username:usernameID })
     res.status(200).json(profile)
-  }
-  catch(e){
-    res.status(400).send({
-      'error':e,
-    })
-  }
+  // }
+  // catch(e){
+  //   res.status(400).send({
+  //     'error':e,
+  //   })
+  // }
 
 })
 
