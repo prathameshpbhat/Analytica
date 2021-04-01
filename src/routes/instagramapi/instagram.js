@@ -111,6 +111,7 @@ console.log(result)
           'error':e,
         })
       }
+      return;
       }
      
       res.status(400).json({
@@ -196,12 +197,15 @@ router.get('/analytica/instagram/real/comments/:id', async (req, res) => {
         res.status(e.status).json({
           'error':e,
         })
+        return;
       }
-      }
-     
+      
       res.status(400).json({
         'error':e,
       })
+      }
+     
+     
     
   }
 
