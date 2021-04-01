@@ -1,5 +1,5 @@
 const axios = require("axios");
-const twitter_search = require("../../models/twitter");
+const twitter_search = require("../../models/twitter/search");
 
 const startSearch = async (req, res) => {
   const search_query = req.body.search_query;
@@ -13,7 +13,7 @@ const startSearch = async (req, res) => {
     let request_payload = {
       query: search_query,
       mode: 1,
-      Author: req.body.user,
+      Author: req.user._id,
     };
     let response = await axios.post(url, request_payload, config);
 

@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const isLoggedIn = require("../../../middleware/isloggedin");
+const isAuth = require("../../../middleware/auth");
 
 const authController = require("../../../controllers/twitter/user/auth.controller");
 
 router.get(
   "/analytica/twitter/login/verify",
-  isLoggedIn,
+  isAuth,
   authController.verifyLogin
 );
 
 router.post(
   "/analytica/twitter/login/callback",
-  isLoggedIn,
+  isAuth,
   authController.loginCallback
 );
 
-router.post("/analytica/twitter/login", isLoggedIn, authController.startLogin);
+router.post("/analytica/twitter/login", isAuth, authController.startLogin);
 
 module.exports = router;
