@@ -135,7 +135,6 @@ router.post("/analytica/analysis/profile/engagement/:id", async (req, res) => {
       Error: e,
     });
   }
-<<<<<<< HEAD
 
  
    
@@ -160,16 +159,6 @@ router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
   }
 })
 
-=======
-});
-router.post("/analytica/analysis/profile/getactivity", async (req, res) => {
-  username = "gowithbang2";
-  const client = new Instagram({ username, password });
-  await client.login();
-  const activity = await client.getActivity();
-  res.status(200).json(activity);
-});
->>>>>>> 657138218416bd2d4230b4026f2a5767199eb1df
 
 // router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
 
