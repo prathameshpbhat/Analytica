@@ -5,7 +5,7 @@ const axios = require('axios')
 
 const Insta = require('scraper-instagram');
 const isloggedin = require('../../middleware/isloggedin');
-
+const isAuth = require('../../middleware/auth');
 const InstaClient = new Insta();
 const router = express.Router();
 
@@ -42,7 +42,7 @@ router.post('/analytica/instagram/search/:tag', async (req, res) => {
   }
 })
 
-router.get('/analytica/instagram/real/tags/:tag', async (req, res) => {
+router.get('/analytica/instagram/real/tags/:tag',isAuth, async (req, res) => {
 
 
 

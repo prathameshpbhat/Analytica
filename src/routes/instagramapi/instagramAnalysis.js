@@ -151,12 +151,20 @@ router.post('/analytica/analysis/profile/engagement/:id', async (req,res)=>{
   
 })
 router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
+  try{
+
+  
   username ="gowithbang2"
   const client = new Instagram({ username, password })
   await client.login()
   const activity = await client.getActivity()
   res.status(200).json(activity)
-
+  }
+  catch(e){
+    res.status(e.statusCode).json({
+      
+    })
+  }
 })
 
 
