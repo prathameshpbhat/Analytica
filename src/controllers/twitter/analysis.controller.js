@@ -108,9 +108,9 @@ const getTopTweets30Days = async (req, res) => {
 const getMetrics = async (req, res) => {
   try {
     const document = await User_Tweets.findOne({ Author: req.user._id });
-    if (!document) return res.status(404).send("Document not found");
+    if (!document) return res.status(404).send("User tweets not found");
     let tweets = document.results;
-    if (!tweets) return res.status(404).send("user tweets not available");
+    if (!tweets) return res.status(404).send("User doesn't have any tweets");
 
     let postFreq = 0;
     for (let i = 0; i < tweets.length - 1; i++) {
