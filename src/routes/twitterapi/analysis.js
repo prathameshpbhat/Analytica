@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const analysisController = require("../../controllers/analysis.controller");
+const analysisController = require("../../controllers/twitter/analysis.controller");
 
 const isAuth = require("../../middleware/auth");
 
