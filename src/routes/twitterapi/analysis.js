@@ -14,6 +14,12 @@ router.get(
 );
 
 router.get(
+  "/analytica/twitter/top_tweets/recent",
+  isAuth,
+  analysisController.getTopTweets30Days
+);
+
+router.get(
   "/analytica/twitter/30_day_period",
   isAuth,
   analysisController.get30DayPeriod

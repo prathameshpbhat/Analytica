@@ -49,7 +49,7 @@ const getTweetType = (user_tweets) => {
       let tweet_type = tweet.referenced_tweets[0].type;
       if (tweet_type == "replied_to") replies++;
       else if (tweet_type == "retweeted") retweets++;
-      else if (tweet_type == "retweeted") quotes++;
+      else if (tweet_type == "quoted") quotes++;
     } else tweets++;
   });
   return {

@@ -9,7 +9,6 @@ const getNonPublicTweets = async (userid) => {
     // const oauth_token_secret = req.body.oauth_token_secret;
     let params = {
       expansions: "in_reply_to_user_id,referenced_tweets.id",
-      exclude: "retweets",
       max_results: "100",
       "tweet.fields":
         "non_public_metrics,public_metrics,created_at,conversation_id",
@@ -95,7 +94,6 @@ const getPublicTweets = async (userid) => {
     // const oauth_token_secret = req.body.oauth_token_secret;
     let params = {
       expansions: "in_reply_to_user_id,referenced_tweets.id",
-      exclude: "retweets",
       max_results: "100",
       "tweet.fields": "public_metrics,created_at,conversation_id",
     };

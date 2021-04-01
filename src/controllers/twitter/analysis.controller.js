@@ -29,7 +29,8 @@ const get30DayPeriod = async (req, res) => {
     const document = await User_Tweets.findOne({ Author: req.user._id });
     if (!document) return res.status(404).send("Document not found");
     let tweets = document.results;
-    if (!tweets) return res.status(404).send("user tweets not available");
+    if (tweets.length == 0)
+      return res.status(404).send("user tweets not available");
 
     let today = new Date();
     let startDate = new Date(
@@ -86,9 +87,20 @@ const getTopTweets = async (req, res) => {
     const document = await User_Tweets.findOne({ Author: req.user._id });
     if (!document) return res.status(404).send("Document not found");
     let tweets = document.results;
-    if (!tweets) return res.status(404).send("user tweets not available");
+    if (tweets.length == 0)
+      return res.status(404).send("user tweets not available");
     const topTweets = tweets
-      .sort((tweet1, tweet2) => tweet2.engagement - tweet1.engagement)
+      .sort(
+        (tweet1, tweet2) =>
+          tweet2.public_metrics.like_count +
+          tweet2.public_metrics.retweet_count +
+          tweet2.public_metrics.reply_count +
+          tweet2.public_metrics.quote_count -
+          (tweet1.public_metrics.like_count +
+            tweet1.public_metrics.retweet_count +
+            tweet1.public_metrics.reply_count +
+            tweet1.public_metrics.quote_count)
+      )
       .slice(0, 5);
     return res.status(200).send(topTweets);
   } catch (error) {
@@ -99,6 +111,22 @@ const getTopTweets = async (req, res) => {
 
 const getTopTweets30Days = async (req, res) => {
   try {
+    const document = await User_Tweets.findOne({ Author: req.user._id });
+    if (!document) return res.status(404).send("Document not found");
+    let tweets = document.results;
+    if (tweets.length == 0)
+      return res.status(404).send("user tweets not available");
+    let non_public_tweets = [];
+    tweets.forEach((tweet) => {
+      if (tweet.non_public_metrics) non_public_tweets.unshift(tweet);
+    });
+    let topTweets = [];
+    if (non_public_tweets) {
+      topTweets = non_public_tweets
+        .sort((tweet1, tweet2) => tweet2.engagement + tweet1.engagement)
+        .slice(0, 5);
+    }
+    return res.status(200).send(topTweets);
   } catch (error) {
     console.log(error);
     return res.status(500).send();
@@ -110,7 +138,8 @@ const getMetrics = async (req, res) => {
     const document = await User_Tweets.findOne({ Author: req.user._id });
     if (!document) return res.status(404).send("User tweets not found");
     let tweets = document.results;
-    if (!tweets) return res.status(404).send("User doesn't have any tweets");
+    if (tweets.length == 0)
+      return res.status(404).send("User doesn't have any tweets");
 
     let postFreq = 0;
     for (let i = 0; i < tweets.length - 1; i++) {
@@ -198,6 +227,7 @@ const getMetrics = async (req, res) => {
 };
 
 module.exports = {
+  getTopTweets30Days,
   get30DayPeriod,
   getTopTweets,
   getMetrics,
