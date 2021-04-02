@@ -84,12 +84,16 @@ const startLogin = async (req, res) => {
   try {
     const api_endpoint = `https://api.twitter.com/oauth/request_token`;
     const params = new URLSearchParams();
-    params.append("oauth_callback", "http://localhost:8080/twitter/login-next");
+    params.append(
+      "oauth_callback",
+      "https://project-backend-test-client.herokuapp.com/twitter/login-next"
+    );
     const options = {
       method: "POST",
       url: api_endpoint,
       params: {
-        oauth_callback: "http://localhost:8080/twitter/login-next",
+        oauth_callback:
+          "https://project-backend-test-client.herokuapp.com/twitter/login-next",
       },
     };
     const headers = {
