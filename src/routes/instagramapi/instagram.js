@@ -13,7 +13,7 @@ const instagramAnalytics = require("instagram-analytics");
 const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
-let username = "gowithbang2";
+let username = "gowithbang3";
 let password = process.env.password;
 let client;
 // (async()=>
@@ -29,7 +29,7 @@ router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
     try {
     let count = 0,
       rc = 0;
-    username = "gowithbang2";
+    username = "gowithbang3";
     if (client === undefined) {
         client = new Instagram({ username, password });
          await client.login();
@@ -250,7 +250,7 @@ router.get( "/analytica/instagram/personalprofile/getfeeds",
     console.log(client)
  
     try {
-      username = "gowithbang2";
+      username = "gowithbang3";
       if (client === undefined) {
  
         client = new Instagram({ username, password });
