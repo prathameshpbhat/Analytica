@@ -179,10 +179,10 @@ const getMetrics = async (req, res) => {
     let response = {};
 
     // if (non_public_tweets.length > 0) {
-    const totals30Days = analysisLib.computeTotals(non_public_tweets);
+    const totals30Days = analysisLib.computeTotals(tweets);
     response = {
       post_frequency: postFreq,
-      post_count_30days: non_public_tweets.length, //CHECK
+      post_count_30days: tweets.length, //CHECK
       average_post_per_day_30Days: averagePostPerDay30Days,
       average_engagementrate_30days: averageEngagementRate30Days,
       average_clickthroughrate_30Days: averageClickThroughRate30Days,
