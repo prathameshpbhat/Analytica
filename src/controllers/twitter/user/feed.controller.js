@@ -1,22 +1,28 @@
-const followersController = require("../../../controllers/twitter/user/followers.controller");
+const oauth = require("../../../libs/oauthv1");
+const axios = require("axios");
 
-const getFollowers = async (userid) => {
+const getfollowing = async (userid) => {
   try {
-    let followers = [];
+    let following = [];
     let next_token = "";
     let requestCount = 1;
-    const api_endpoint = `https://api.twitter.com/2/users/${userid}/followers`;
+    const api_endpoint = `https://api.twitter.com/2/users/${userid}/following`;
 
-    const params = {
+    let params = {
       max_results: 1000,
+      "tweet.fields":
+        "author_id,in_reply_to_user_id,public_metrics,conversation_id,created_at,id",
       "user.fields":
         "created_at,location,profile_image_url,url,verified,public_metrics",
+      expansions: pinned_tweet_id,
     };
-    const options = {
+
+    let options = {
       method: "GET",
       url: api_endpoint,
       params: params,
     };
+
     const config = {
       params: params,
       headers: {
@@ -24,22 +30,17 @@ const getFollowers = async (userid) => {
         Authorization: oauth.generateAuthHeader(options),
       },
     };
+
     console.log(`Request: ${requestCount}`);
     requestCount++;
+
     const response = await axios.get(api_endpoint, config);
-    followers = followers.concat(response.data.data);
+    following = following.concat(response.data.data);
     next_token = response.data.meta.next_token;
+
     while (next_token) {
-      const params = {
-        max_results: 1000,
-        "user.fields":
-          "created_at,location,profile_image_url,url,verified,public_metrics",
-      };
-      const options = {
-        method: "GET",
-        url: api_endpoint,
-        params: params,
-      };
+      params.pagination_token = next_token;
+      options.params = params;
       const config = {
         params: params,
         headers: {
@@ -50,21 +51,36 @@ const getFollowers = async (userid) => {
       console.log(`Request: ${requestCount}`);
       requestCount++;
       const response = await axios.get(api_endpoint, config);
-      followers = followers.concat(response.data.data);
+      following = following.concat(response.data.data);
       next_token = response.data.meta.next_token;
       if (requestCount > 2) break;
     }
-    console.log(`Number of followers: ${followers.length}`);
-    return Promise.resolve(followers);
+    console.log(`Number of following: ${following.length}`);
+    return Promise.resolve(following);
   } catch (error) {
     return Promise.reject(error);
   }
 };
 
+Array.prototype.shuffle = function () {
+  let input = this;
+
+  for (let i = input.length - 1; i >= 0; i--) {
+    let randomIndex = Math.floor(Math.random() * (i + 1));
+    let itemAtIndex = input[randomIndex];
+
+    input[randomIndex] = input[i];
+    input[i] = itemAtIndex;
+  }
+  return input;
+};
+
 const getFeed = async (req, res) => {
   try {
-    const followers = getFollowers(req.user.twitter.user_details.id_str);
-    return res.status(200).json(followers);
+    const following = await getfollowing(req.user.twitter.user_details.id_str);
+    // following.shuffle();
+    // following.forEach((follower) => {});
+    return res.status(200).json(following);
   } catch (error) {
     if (error.response) {
       return res.status(error.response.status).json(error);

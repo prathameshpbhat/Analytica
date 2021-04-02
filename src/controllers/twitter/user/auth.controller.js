@@ -100,6 +100,7 @@ const startLogin = async (req, res) => {
     };
     const response = await axios.post(api_endpoint, params, headers);
     const response_data = query_params_to_json(response.data);
+
     return res.status(200).json({
       redirectUri: `https://twitter.com/oauth/authenticate?oauth_token=${response_data.oauth_token}`,
       oauthRequestToken: response_data.oauth_token,

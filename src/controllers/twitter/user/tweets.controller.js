@@ -306,7 +306,7 @@ const getLikeList = async (req, res) => {
 
 const requestUserTweets = async (req, res) => {
   try {
-    const userid = req.user.twitter.user_details.id_str;
+    const userid = "832616602352783362";
     if (!userid)
       return res
         .status(404)
