@@ -4,6 +4,10 @@ const User_Tweets = require("../../models/twitter/user_tweets");
 
 const userTweetsHelper = require("../../libs/user_tweets");
 
+const oauth = require(`../../libs/oauthv1`);
+
+const axios = require("axios");
+
 Date.prototype.addDays = function (days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
@@ -83,6 +87,36 @@ const get30DayPeriod = async (req, res) => {
   }
 };
 
+const getUser = async (userid) => {
+  try {
+    let count = 0;
+    const api_endpoint = `https://api.twitter.com/1.1/users/lookup.json`;
+    // const oauth_token = req.body.oauth_token;
+    // const oauth_token_secret = req.body.oauth_token_secret;
+    let params = {
+      user_id: userid,
+    };
+    const options = {
+      method: "GET",
+      url: api_endpoint,
+      params: params,
+      // oauth_token: oauth_token,
+      // oauth_token_secret: oauth_token_secret
+    };
+    const config = {
+      params: params,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: oauth.generateAuthHeader(options),
+      },
+    };
+    const response = await axios.get(api_endpoint, config);
+    return Promise.resolve(response.data);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
 const getTopTweets = async (req, res) => {
   try {
     const document = await User_Tweets.findOne({ Author: req.user._id });
@@ -128,13 +162,30 @@ const getTopTweets30Days = async (req, res) => {
   }
 };
 
+const recent_tweets = (tweets) => {
+  let postDates = [];
+  let postLikes = [];
+  let postComments = [];
+  let i = 1;
+  tweets.forEach((tweet) => {
+    postDates.unshift(tweet.created_at);
+    postLikes.unshift(tweet.public_metrics.like_count);
+    postComments.unshift(tweet.public_metrics.reply_count);
+    i++;
+    if (i > 12) return { postDates, postLikes, postComments };
+  });
+  return { postDates, postLikes, postComments };
+};
+
 const getMetrics = async (req, res) => {
   try {
     const tweets = await userTweetsHelper.getNonPublicTweets(
       "832616602352783362"
     );
+
     if (!tweets) return res.status(404).send("User doesn't have any tweets");
 
+    const user = await getUser("832616602352783362");
     let postFreq = 0;
     for (let i = 0; i < tweets.length - 1; i++) {
       const day1 = new Date(tweets[i].created_at);
@@ -142,6 +193,15 @@ const getMetrics = async (req, res) => {
       postFreq += day1.getTime() - day2.getTime();
     }
     postFreq = 1 / (postFreq / 1000 / 60 / 60 / 24 / 3);
+
+    let followers_count = null;
+    let likes_count = null;
+    let posts_count = null;
+    if (user) {
+      followers_count = user[0].followers_count;
+      likes_count = user[0].favourites_count;
+      posts_count = user[0].statuses_count;
+    }
 
     let click_through_rate30days = 0;
     let engagement_rate30days = 0;
@@ -160,6 +220,8 @@ const getMetrics = async (req, res) => {
       virality_rate30days += tweet.virality_rate;
       tweet_count30days++;
     });
+
+    const { postDates, postLikes, postComments } = recent_tweets(tweets);
 
     const averageEngagementRate30Days =
       (engagement_rate30days / tweet_count30days) * 100;
@@ -181,24 +243,30 @@ const getMetrics = async (req, res) => {
     // if (non_public_tweets.length > 0) {
     const totals30Days = analysisLib.computeTotals(tweets);
     response = {
-      post_frequency: postFreq,
-      post_count_30days: tweets.length, //CHECK
-      average_post_per_day_30Days: averagePostPerDay30Days,
-      average_engagementrate_30days: averageEngagementRate30Days,
-      average_clickthroughrate_30Days: averageClickThroughRate30Days,
-      average_likerate_30Days: averageLikeRate30Days,
-      average_viralityrate_30Days: averageViralityRate30Days,
+      postdates: postDates,
+      postLikes: postLikes,
+      postComments: postComments,
+      postFrequency: postFreq,
+      // post_count_30days: tweets.length, //CHECK
+      // average_post_per_day_30Days: averagePostPerDay30Days,
+      // engagement: averageEngagementRate30Days,
+      // average_clickthroughrate_30Days: averageClickThroughRate30Days,
+      // average_likerate_30Days: averageLikeRate30Days,
+      // average_viralityrate_30Days: averageViralityRate30Days,
       // total_likes_overtime: totalsOverTime.total_likes,
       // total_replies_overtime: totalsOverTime.total_replies,
       // total_retweets_overtime: totalsOverTime.total_retweets,
       // total_quotes_overtime: totalsOverTime.total_quotes,
-      total_likes_30days: totals30Days.total_likes,
-      total_replies_30days: totals30Days.total_replies,
-      total_retweets_30days: totals30Days.total_retweets,
-      total_quotes_30days: totals30Days.total_quotes,
-      total_url_link_clicks_30days: totals30Days.total_url_link_clicks,
-      total_impressions_30days: totals30Days.total_impressions,
-      total_engagement_30days: totals30Days.total_engagement_30days,
+      followers: followers_count,
+      likes: likes_count,
+      posts: posts_count,
+      // total_likes_30days: totals30Days.total_likes,
+      // total_replies_30days: totals30Days.total_replies,
+      // total_retweets_30days: totals30Days.total_retweets,
+      // total_quotes_30days: totals30Days.total_quotes,
+      // total_url_link_clicks_30days: totals30Days.total_url_link_clicks,
+      // total_impressions_30days: totals30Days.total_impressions,
+      // total_engagement_30days: totals30Days.total_engagement_30days,
     };
     // } else {
     // response = {
@@ -212,8 +280,12 @@ const getMetrics = async (req, res) => {
 
     return res.status(200).send(response);
   } catch (error) {
-    console.log(error);
-    return res.status(500).send();
+    if (error.response) {
+      return res.status(error.response.status).send(error);
+    } else {
+      console.log(error);
+      return res.status(500).send();
+    }
   }
 };
 
