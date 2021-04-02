@@ -3,11 +3,11 @@ const User = require("../models/users");
 
 const auth = async function (req, res, next) {
   try {
-    // console.log('inside auth')
+    console.log('inside auth')
     const token = req.header("Authorization").replace("Bearer ", "");
-    // console.log(token)
+    console.log(token)
     const decoded = await jwt.verify(token, process.env.JWTTOKEN);
-    // console.log("HEre"+decoded)
+    console.log("HEre"+decoded)
     const user = await User.findOne({
       _id: decoded,
       "tokens.token": token,
@@ -17,6 +17,7 @@ const auth = async function (req, res, next) {
         status: "Authenticate User",
       });
     }
+    console.log("aauuuuthhhhhhh donnnnnnnne")
     req.token = token;
     req.user = user;
 
