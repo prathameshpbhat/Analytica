@@ -181,24 +181,7 @@ catch(e){
 
 //   })
 
-router.post(
-  "/analytica/analysis/profile/getsimilarcharacters/:id",
-  async (req, res) => {
-    username = "gowithbang2";
-    const client = new Instagram({ username, password });
-    await client.login();
-    const instagram = await client.getUserByUsername({
-      username: req.params.id,
-    });
 
-    let userId = instagram.id;
-    console.log("here" + userId);
-
-    const result = await client.getChainsData({ userId });
-    // const activity = await client.getActivity()
-    res.status(200).json(result);
-  }
-);
 // router.get('/checker/analytica/analysis/profile/engagement/:id', async (req,res)=>{
 
 //   let username="gowithbang2"

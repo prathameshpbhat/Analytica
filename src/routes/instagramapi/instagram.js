@@ -28,8 +28,11 @@ router.post("/analytica/instagram/search/:tag", async (req, res) => {
     let count = 0,
       rc = 0;
     username = "gowithbang2";
-    if (client.country_code === undefined) {
-      await client.login();
+    if (client === undefined) {
+        client = new Instagram({ username, password });
+         await client.login();
+      
+     
     }
 
     const result = await client.getMediaFeedByHashtag({
@@ -86,7 +89,8 @@ router.get("/analytica/instagram/real/tags/:tag", isAuth, async (req, res) => {
   console.log(tag);
   try {
     username = "gowithbang2";
-    if (client.country_code === undefined) {
+    if (client === undefined) {
+      client = new Instagram({ username, password });
       await client.login();
     }
 
@@ -117,7 +121,8 @@ router.post("/analytica/instagram/comments/:id", async (req, res) => {
     let tag = req.params.id;
 
     username = "gowithbang2";
-    if (client.country_code === undefined) {
+    if (client === undefined) {
+      client = new Instagram({ username, password });
       await client.login();
     }
 
@@ -163,7 +168,8 @@ router.get("/analytica/instagram/real/comments/:id", async (req, res) => {
   console.log(tag);
   try {
     username = "gowithbang2";
-    if (client.country_code === undefined) {
+    if (client === undefined) {
+      client = new Instagram({ username, password });
       await client.login();
     }
 
@@ -187,7 +193,8 @@ router.get("/analytica/instagram/real/comments/:id", async (req, res) => {
 router.get("/analytica/instagram/profile/:id", async (req, res) => {
   try {
     username = "gowithbang2";
-    if (client.country_code === undefined) {
+    if (client === undefined) {
+      client = new Instagram({ username, password });
       await client.login();
     }
     let usernameID = req.params.id;
@@ -210,7 +217,8 @@ router.get("/analytica/instagram/profile/:id", async (req, res) => {
 router.get("/analytica/instagram/personalprofile", async (req, res) => {
   try {
     username = "gowithbang2";
-    if (client.country_code === undefined) {
+    if (client === undefined) {
+      client = new Instagram({ username, password });
       await client.login();
     }
     let usernameID = req.params.id;
@@ -229,17 +237,16 @@ router.get("/analytica/instagram/personalprofile", async (req, res) => {
     });
   }
 });
-router.get(
-  "/analytica/instagram/personalprofile/getfeeds",
+router.get( "/analytica/instagram/personalprofile/getfeeds",
   async (req, res) => {
     try {
       username = "gowithbang2";
-      if (client.country_code === undefined) {
+      if (client === undefined) {
+ 
+        client = new Instagram({ username, password });
         await client.login();
       }
-      if (client.country_code === undefined) {
-        await client.login();
-      }
+     
 
       const feeds = await client.getHome();
       res.status(200).json(feeds);
@@ -256,5 +263,31 @@ router.get(
     }
   }
 );
+router.post("/analytica/analysis/profile/getsimilarcharacters/:id",
+  async (req, res) => {
+    try{
 
+   
+      username = "gowithbang2";
+      if (client === undefined) {
+        client = new Instagram({ username, password });
+        await client.login();
+      }
+     
+    const instagram = await client.getUserByUsername({
+      username: req.params.id,
+    });
+
+    let userId = instagram.id;
+    console.log("here" + userId);
+
+    const result = await client.getChainsData({ userId });
+    // const activity = await client.getActivity()
+    res.status(200).json(result);
+  
+}
+catch(e){
+  res.status(400).json
+}
+  });
 module.exports = router;
