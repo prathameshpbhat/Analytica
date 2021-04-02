@@ -2,6 +2,8 @@ const analysisLib = require("../../libs/analysis.js");
 
 const User_Tweets = require("../../models/twitter/user_tweets");
 
+const userTweetsHelper = require("../../libs/user_tweets");
+
 Date.prototype.addDays = function (days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
@@ -26,11 +28,10 @@ const ISOtoRegular = (date) => {
 
 const get30DayPeriod = async (req, res) => {
   try {
-    const document = await User_Tweets.findOne({ Author: req.user._id });
-    if (!document) return res.status(404).send("Document not found");
-    let tweets = document.results;
-    if (tweets.length == 0)
-      return res.status(404).send("user tweets not available");
+    const tweets = await userTweetsHelper.getNonPublicTweets(
+      req.user.twitter.user_details.id_str
+    );
+    if (!tweets) return res.status(404).send("user tweets not available");
 
     let today = new Date();
     let startDate = new Date(
@@ -111,21 +112,15 @@ const getTopTweets = async (req, res) => {
 
 const getTopTweets30Days = async (req, res) => {
   try {
-    const document = await User_Tweets.findOne({ Author: req.user._id });
-    if (!document) return res.status(404).send("Document not found");
-    let tweets = document.results;
-    if (tweets.length == 0)
-      return res.status(404).send("user tweets not available");
-    let non_public_tweets = [];
-    tweets.forEach((tweet) => {
-      if (tweet.non_public_metrics) non_public_tweets.unshift(tweet);
-    });
+    const tweets = await userTweetsHelper.getNonPublicTweets(
+      req.user.twitter.user_details.id_str
+    );
+    if (!tweets) return res.status(404).send("user tweets not available");
     let topTweets = [];
-    if (non_public_tweets) {
-      topTweets = non_public_tweets
-        .sort((tweet1, tweet2) => tweet2.engagement + tweet1.engagement)
-        .slice(0, 5);
-    }
+    topTweets = tweets
+      .sort((tweet1, tweet2) => tweet2.engagement + tweet1.engagement)
+      .slice(0, 5);
+
     return res.status(200).send(topTweets);
   } catch (error) {
     console.log(error);
@@ -135,11 +130,10 @@ const getTopTweets30Days = async (req, res) => {
 
 const getMetrics = async (req, res) => {
   try {
-    const document = await User_Tweets.findOne({ Author: req.user._id });
-    if (!document) return res.status(404).send("User tweets not found");
-    let tweets = document.results;
-    if (tweets.length == 0)
-      return res.status(404).send("User doesn't have any tweets");
+    const tweets = await userTweetsHelper.getNonPublicTweets(
+      req.user.twitter.user_details.id_str
+    );
+    if (!tweets) return res.status(404).send("User doesn't have any tweets");
 
     let postFreq = 0;
     for (let i = 0; i < tweets.length - 1; i++) {
@@ -155,19 +149,16 @@ const getMetrics = async (req, res) => {
     let like_rate30days = 0;
     let virality_rate30days = 0;
 
-    let non_public_tweets = [];
+    // let non_public_tweets = [];
 
     tweets.forEach((tweet) => {
-      if (tweet.non_public_metrics) {
-        if (tweet.non_public_metrics.url_link_clicks) {
-          click_through_rate30days += tweet.click_through_rate;
-        }
-        engagement_rate30days += tweet.engagement;
-        like_rate30days += tweet.like_rate;
-        virality_rate30days += tweet.virality_rate;
-        tweet_count30days++;
-        non_public_tweets.unshift(tweet);
+      if (tweet.non_public_metrics.url_link_clicks) {
+        click_through_rate30days += tweet.click_through_rate;
       }
+      engagement_rate30days += tweet.engagement;
+      like_rate30days += tweet.like_rate;
+      virality_rate30days += tweet.virality_rate;
+      tweet_count30days++;
     });
 
     const averageEngagementRate30Days =
@@ -183,41 +174,41 @@ const getMetrics = async (req, res) => {
 
     const averagePostPerDay30Days = tweet_count30days / 30;
 
-    const totalsOverTime = analysisLib.computeTotals(tweets);
+    // const totalsOverTime = analysisLib.computeTotals(tweets);
 
     let response = {};
 
-    if (non_public_tweets.length > 0) {
-      const totals30Days = analysisLib.computeTotals(non_public_tweets);
-      response = {
-        post_frequency: postFreq,
-        post_count_30days: non_public_tweets.length, //CHECK
-        average_post_per_day_30Days: averagePostPerDay30Days,
-        average_engagementrate_30days: averageEngagementRate30Days,
-        average_clickthroughrate_30Days: averageClickThroughRate30Days,
-        average_likerate_30Days: averageLikeRate30Days,
-        average_viralityrate_30Days: averageViralityRate30Days,
-        total_likes_overtime: totalsOverTime.total_likes,
-        total_replies_overtime: totalsOverTime.total_replies,
-        total_retweets_overtime: totalsOverTime.total_retweets,
-        total_quotes_overtime: totalsOverTime.total_quotes,
-        total_likes_30days: totals30Days.total_likes,
-        total_replies_30days: totals30Days.total_replies,
-        total_retweets_30days: totals30Days.total_retweets,
-        total_quotes_30days: totals30Days.total_quotes,
-        total_url_link_clicks_30days: totals30Days.total_url_link_clicks,
-        total_impressions_30days: totals30Days.total_impressions,
-        total_engagement_30days: totals30Days.total_engagement_30days,
-      };
-    } else {
-      response = {
-        post_frequency: postFreq,
-        total_likes_overtime: totalsOverTime.total_likes,
-        total_replies_overtime: totalsOverTime.total_replies,
-        total_retweets_overtime: totalsOverTime.total_retweets,
-        total_quotes_overtime: totalsOverTime.total_quotes,
-      };
-    }
+    // if (non_public_tweets.length > 0) {
+    const totals30Days = analysisLib.computeTotals(non_public_tweets);
+    response = {
+      post_frequency: postFreq,
+      post_count_30days: non_public_tweets.length, //CHECK
+      average_post_per_day_30Days: averagePostPerDay30Days,
+      average_engagementrate_30days: averageEngagementRate30Days,
+      average_clickthroughrate_30Days: averageClickThroughRate30Days,
+      average_likerate_30Days: averageLikeRate30Days,
+      average_viralityrate_30Days: averageViralityRate30Days,
+      // total_likes_overtime: totalsOverTime.total_likes,
+      // total_replies_overtime: totalsOverTime.total_replies,
+      // total_retweets_overtime: totalsOverTime.total_retweets,
+      // total_quotes_overtime: totalsOverTime.total_quotes,
+      total_likes_30days: totals30Days.total_likes,
+      total_replies_30days: totals30Days.total_replies,
+      total_retweets_30days: totals30Days.total_retweets,
+      total_quotes_30days: totals30Days.total_quotes,
+      total_url_link_clicks_30days: totals30Days.total_url_link_clicks,
+      total_impressions_30days: totals30Days.total_impressions,
+      total_engagement_30days: totals30Days.total_engagement_30days,
+    };
+    // } else {
+    // response = {
+    //   post_frequency: postFreq,
+    //   total_likes_overtime: totalsOverTime.total_likes,
+    //   total_replies_overtime: totalsOverTime.total_replies,
+    //   total_retweets_overtime: totalsOverTime.total_retweets,
+    //   total_quotes_overtime: totalsOverTime.total_quotes,
+    //   };
+    // };
 
     return res.status(200).send(response);
   } catch (error) {
