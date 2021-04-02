@@ -5,7 +5,11 @@ const analysisController = require("../../controllers/twitter/analysis.controlle
 
 const isAuth = require("../../middleware/auth");
 
-router.get("/analytica/twitter/metrics", isAuth, analysisController.getMetrics);
+router.get(
+  "/analytica/twitter/analysis",
+  isAuth,
+  analysisController.getMetrics
+);
 
 router.get(
   "/analytica/twitter/top_tweets",
