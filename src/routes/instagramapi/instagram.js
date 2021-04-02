@@ -24,7 +24,7 @@ let client;
 // })();
 router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
   var tag = req.params.tag;
-  console.log(req.user)
+
  console.log(client)
     try {
     let count = 0,
