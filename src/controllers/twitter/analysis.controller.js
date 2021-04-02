@@ -29,7 +29,7 @@ const ISOtoRegular = (date) => {
 const get30DayPeriod = async (req, res) => {
   try {
     const tweets = await userTweetsHelper.getNonPublicTweets(
-      req.user.twitter.user_details.id_str
+      "832616602352783362"
     );
     if (!tweets) return res.status(404).send("user tweets not available");
 
@@ -113,7 +113,7 @@ const getTopTweets = async (req, res) => {
 const getTopTweets30Days = async (req, res) => {
   try {
     const tweets = await userTweetsHelper.getNonPublicTweets(
-      req.user.twitter.user_details.id_str
+      "832616602352783362"
     );
     if (!tweets) return res.status(404).send("user tweets not available");
     let topTweets = [];
@@ -131,7 +131,7 @@ const getTopTweets30Days = async (req, res) => {
 const getMetrics = async (req, res) => {
   try {
     const tweets = await userTweetsHelper.getNonPublicTweets(
-      req.user.twitter.user_details.id_str
+      "832616602352783362"
     );
     if (!tweets) return res.status(404).send("User doesn't have any tweets");
 

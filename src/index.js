@@ -20,6 +20,7 @@ app.use(
 //ROUTES
 const login_route = require("./routes/login");
 
+const twitter_feedRoute = require("./routes/twitterapi/user/feed");
 const twitter_followersRoute = require("./routes/twitterapi/user/followers");
 const twitter_authRoute = require("./routes/twitterapi/user/auth");
 const twitter_searchRoute = require("./routes/twitterapi/search");
@@ -35,6 +36,7 @@ const instagramAnalysis = require("./routes/instagramapi/instagramAnalysis");
 
 app.use(login_route);
 
+app.use(twitter_feedRoute);
 app.use(twitter_followersRoute);
 app.use(twitter_authRoute);
 app.use(twitter_searchRoute);
