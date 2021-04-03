@@ -73,4 +73,32 @@ route.post("/Analytica/users/Logout", auth, async (req, res) => {
     });
   }
 });
+
+
+route.post("/Analytica/users/checkexists", async (req, res) => {
+  try {
+   
+    const token = req.header("Authorization").replace("Bearer ", "");
+   
+    const decoded = await jwt.verify(token, process.env.JWTTOKEN);
+   
+    const user = await User.findOne({
+      _id: decoded,
+      "tokens.token": token,
+    });
+    if (!user) {
+      return res.status(401).json({
+        status: "Authenticate User",
+      });
+    }
+    console.log("aauuuuthhhhhhh donnnnnnnne inside checkexists")
+    return res.status(200).json({
+      status: "Authenticate User",
+    });
+  } catch (e) {
+    throw new Error(e);
+  }
+});
+
+
 module.exports = route;
