@@ -77,21 +77,22 @@ route.post("/Analytica/users/Logout", auth, async (req, res) => {
 
 route.get("/Analytica/users/checkexists", async (req, res) => {
   // try {
-   
+    console.log("chechexits stage1")
     const token = req.header("Authorization").replace("Bearer ", "");
    
     const decoded = await jwt.verify(token, process.env.JWTTOKEN);
-   
+    console.log("chechexits stage2")
     const user = await User.findOne({
       _id: decoded,
       "tokens.token": token,
     });
+    console.log("chechexits stage3")
     if (!user) {
       return res.status(401).json({
         status: "Authenticate User",
       });
     }
-    console.log("aauuuuthhhhhhh donnnnnnnne inside checkexists")
+    console.log("chechexits stage4")
     return res.status(200).json({
       status: "Authenticate User",
     });
