@@ -1,7 +1,7 @@
 const USER = require("../models/users");
 const express = require("express");
 const auth = require("../middleware/auth");
-
+const jwt = require("jsonwebtoken");
 const route = express.Router();
 
 route.post("/Analytica/users/Register", async (req, res) => {
