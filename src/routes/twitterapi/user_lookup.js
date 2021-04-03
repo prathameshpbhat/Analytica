@@ -6,7 +6,7 @@ router.get(
   "/analytica/twitter/user/by/:username",
   isAuth,
   (req, res) => {
-    const api_endpoint = `https://api.twitter.com/2/users/by/username/${req.params.}`;
+    const api_endpoint = `https://api.twitter.com/2/users/by/username/${req.params.username}`;
     // const oauth_token = req.body.oauth_token;
     // const oauth_token_secret = req.body.oauth_token_secret;
     let params = {

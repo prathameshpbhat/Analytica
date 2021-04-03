@@ -108,13 +108,7 @@ router.post("/analytica/analysis/profile/engagement/:id", async (req, res) => {
       lastpost = e;
     });
     if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
-      freq =
-        1 /
-        (freq /
-          60 /
-          60 /
-          24 /
-          instagram.edge_owner_to_timeline_media.edges.length);
+      freq =1 /(freq /60 /60 /24 /instagram.edge_owner_to_timeline_media.edges.length);
     }
 
     let engagement = (likes + comments) / posts / followers;
