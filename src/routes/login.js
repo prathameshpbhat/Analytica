@@ -75,7 +75,7 @@ route.post("/Analytica/users/Logout", auth, async (req, res) => {
 });
 
 
-route.post("/Analytica/users/checkexists", async (req, res) => {
+route.get("/Analytica/users/checkexists", async (req, res) => {
   try {
    
     const token = req.header("Authorization").replace("Bearer ", "");
@@ -96,7 +96,9 @@ route.post("/Analytica/users/checkexists", async (req, res) => {
       status: "Authenticate User",
     });
   } catch (e) {
-    throw new Error(e);
+    return res.status(401).json({
+      status: "Authenticate User",
+    });
   }
 });
 
