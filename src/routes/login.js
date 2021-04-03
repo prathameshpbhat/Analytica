@@ -3,7 +3,7 @@ const express = require("express");
 const auth = require("../middleware/auth");
 const jwt = require("jsonwebtoken");
 const route = express.Router();
-
+const User = require("../models/users");
 route.post("/Analytica/users/Register", async (req, res) => {
   try {
     const user = new USER(req.body);
