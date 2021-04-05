@@ -6,7 +6,7 @@ const InstaClient = new Insta();
 const router = express.Router();
 const instagramdb = require('../../models/instagram')
 const instagramCommentDb = require('../../models/instagramcommentschema')
-
+const isAuth = require("../../middleware/auth");
 
 router.post('/analytica/instagram/tags/:documentId/status', isloggedin, async (req, res) => {
 
@@ -73,6 +73,19 @@ router.get('/analytica/instagram/tags/:documentId/download', (req, res) => {
     })
   })
 })
+
+router.get('/analytica/instagram/tags/All/download', isAuth,(req, res) => {
+  try{
+    const result=await instagramdb.find({'Author':req.user.Email})
+    res.status(200).json(result)
+  }
+catch(e){
+  res.send(e.status).json({
+    Error:e.toString(),
+  })
+}
+})
+
 
 router.get('/analytica/instagram/alltags', isloggedin, async (req, res) => {
 
@@ -152,6 +165,9 @@ router.get('/analytica/instagram/comments/:documentId/status', isloggedin, async
 
 
 })
+
+
+
 
 
 module.exports = router
