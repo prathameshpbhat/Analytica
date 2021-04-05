@@ -92,8 +92,22 @@ const downloadSearchResults = (req, res) => {
     });
 };
 
+const downloadAllSearchResults=async (req,res)=>{
+  try{
+    const result=await twitter_search.find({"Author":req.user._id}).sort({'date':-1}).limit(5)
+    res.status(200).json(result)
+  }
+catch(e){
+  res.status(e.status).json({
+    Error:e.toString(),
+  })
+}
+}
+
 module.exports = {
+  
   startSearch,
   checkSearchStatus,
   downloadSearchResults,
+  downloadAllSearchResults
 };

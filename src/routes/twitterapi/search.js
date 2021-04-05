@@ -18,4 +18,10 @@ router.get(
   searchController.downloadSearchResults
 );
 
+router.get(
+  "/analytica/twitter/search/all/download",
+  isAuth,
+  searchController.downloadAllSearchResults
+);
+
 module.exports = router;
