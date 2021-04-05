@@ -115,7 +115,7 @@ console.log("check eachelelemt"+eachElement)
         finalSubmmission.push(eachElement)
 
     })
-    res.status(200).json(result)
+    res.status(200).json({"Info":result})
 
   }
 catch(e){
