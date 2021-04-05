@@ -80,7 +80,7 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
     const result=await instagramdb.find({'author':req.user.Email,status:1}).sort({'created_at':-1}).limit(5)
     let submission=result
     let finalSubmmission=[];
-  return  res.status(200).json(result[0])
+  // return  res.status(200).json(result[0])
     result.forEach((el)=>{
       let positiveArray=[],negativeArray=[],neutralArray=[]
       let eachElement={
@@ -91,22 +91,22 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
           Time:el.updatedAt
       }
       console.log('stage1 allDownload')
-        el.results.forEach((al)=>{
-          console.log('stage2 allDownload')
-          let eachCaptionResukt={
-            Caption:al.caption,
-            Sentiment:al.sentiment
-          }
-          if(al.sentiment==="Positive"){
-            positiveArray.push(eachCaptionResukt)
-          }
-          else if(al.sentiment==="Negative"){
-            negativeArray.push(eachCaptionResukt)
-          }
-          else{
-            neutralArray.push(eachCaptionResukt)
-          }
-        })
+        // el.results.forEach((al)=>{
+        //   console.log('stage2 allDownload')
+        //   let eachCaptionResukt={
+        //     Caption:al.caption,
+        //     Sentiment:al.sentiment
+        //   }
+        //   if(al.sentiment==="Positive"){
+        //     positiveArray.push(eachCaptionResukt)
+        //   }
+        //   else if(al.sentiment==="Negative"){
+        //     negativeArray.push(eachCaptionResukt)
+        //   }
+        //   else{
+        //     neutralArray.push(eachCaptionResukt)
+        //   }
+        // })
         if(positiveArray.length>0)
         eachElement.positives.push(positiveArray)
         if(negativeArray.length>0)
@@ -119,7 +119,7 @@ console.log("check eachelelemt"+eachElement)
 
     })
 
-    res.status(200).json(submission)
+    res.status(200).json(finalSubmmission)
   // }
 // catch(e){
 //   res.send(e.status).json({
