@@ -106,15 +106,15 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
         if(positiveArray.length>0)
         eachElement.positives.push(positiveArray)
         if(negativeArray.length>0)
-        eachElement.positives.push(negativeArray)
+        eachElement.negatives.push(negativeArray)
         if(neutralArray.length>0)
-        eachElement.positives.push(neutralArray)
+        eachElement.Neutral.push(neutralArray)
 
-        
+console.log(eachElement)
         finalSubmmission.push(eachElement)
 
     })
-    res.status(200).json(finalSubmmission)
+    res.status(200).json(result)
 
   }
 catch(e){
