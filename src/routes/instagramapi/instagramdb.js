@@ -78,8 +78,9 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
   try{
     console.log(req.user.Email)
     const result=await instagramdb.find({'author':req.user.Email,status:1}).sort({'created_at':-1}).limit(5)
+    let submission=result
     let finalSubmmission=[];
-    res.status(200).json(result)
+ 
     result.forEach((el)=>{
       let positiveArray=[],negativeArray=[],neutralArray=[]
       let eachElement={
@@ -89,7 +90,9 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
           Neutral:[],
           Time:el.updatedAt
       }
+      console.log('stage1 allDownload')
         el.results.forEach((al)=>{
+          console.log('stage2 allDownload')
           let eachCaptionResukt={
             Caption:al.caption,
             Sentiment:al.sentiment
@@ -116,7 +119,7 @@ console.log("check eachelelemt"+eachElement)
 
     })
 
-
+    res.status(200).json(submission)
   }
 catch(e){
   res.send(e.status).json({
