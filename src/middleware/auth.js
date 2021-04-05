@@ -23,7 +23,9 @@ const auth = async function (req, res, next) {
 
     next();
   } catch (e) {
-    throw new Error(e);
+   res.status(500).json({
+     Error:'Send proper jwt Token'
+   })
   }
 };
 module.exports = auth;

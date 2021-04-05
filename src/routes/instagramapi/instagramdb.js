@@ -77,7 +77,7 @@ router.get('/analytica/instagram/tags/:documentId/download' ,isAuth,async (req, 
 router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => {
   try{
     console.log(req.user.Email)
-    const result=await instagramdb.find({'Author':req.user.Email})
+    const result=await instagramdb.find({'author':req.user.Email})
     res.status(200).json(result)
   }
 catch(e){
