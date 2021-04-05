@@ -32,6 +32,7 @@ const twitter_analysis = require("./routes/twitterapi/analysis");
 const instagramRoute = require("./routes/instagramapi/instagram");
 const instagramdb = require("./routes/instagramapi/instagramdb");
 const instagramAnalysis = require("./routes/instagramapi/instagramAnalysis");
+const EmailTest = require("./routes/test/emailTest");
 //
 
 app.use(login_route);
@@ -48,7 +49,7 @@ app.use(twitter_analysis);
 app.use(instagramdb);
 app.use(instagramRoute);
 app.use(instagramAnalysis);
-
+app.use(EmailTest);
 app.listen(PORT, () => {
   console.log("server started");
 });
