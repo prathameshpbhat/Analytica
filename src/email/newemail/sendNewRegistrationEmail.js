@@ -3,11 +3,12 @@ const { promisify } = require('util');
 const fs=require('fs')
 let mail='gowithbang@gmail.com';
 let pass="gowithbang99*"
+var smtpTransport = require('nodemailer-smtp-transport');
 const readFile = promisify(fs.readFile);
 const SendNewregistrationEmail=async(toMail)=>{
 
 
-    const transPorter=nodeMailer.createTransport({
+    const transPorter=nodeMailer.createTransport(smtpTransport({
         host: 'smtp.gmail.com',
         port: 587,
         secure: false, 
@@ -15,7 +16,7 @@ const SendNewregistrationEmail=async(toMail)=>{
             user:mail,
             pass:pass
         }
-    })
+    }))
 let html;
     try{
      html=   await readFile('./src/email/newemail/index.html', 'utf8')
