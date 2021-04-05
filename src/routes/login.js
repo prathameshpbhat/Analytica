@@ -32,15 +32,14 @@ route.post("/Analytica/users/Register", async (req, res) => {
 
 route.post("/Analytica/users/changePassword", isAuth,async (req, res) => {
   try {
-   
+  //  User.findByIdAndDelete(req.user._id)
  req.user.Password=req.body.Password
-    await user.save();
+    await req.user.save();
    
-    req.token = token;
+  
     res.status(200).json({
       status: "success",
-      Username: req.body.Email,
-      token: token,
+  
     });
   } catch (e) {
     console.log(req.body.Email);
