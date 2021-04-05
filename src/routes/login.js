@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const route = express.Router();
 const User = require("../models/users");
 const Nodemailer =require('../email/newemail/sendNewRegistrationEmail')
+const isAuth = require("../middleware/auth");
 route.post("/Analytica/users/Register", async (req, res) => {
   try {
    
@@ -14,6 +15,27 @@ route.post("/Analytica/users/Register", async (req, res) => {
 
     await user.save();
     Nodemailer(req.body.Email)
+    req.token = token;
+    res.status(200).json({
+      status: "success",
+      Username: req.body.Email,
+      token: token,
+    });
+  } catch (e) {
+    console.log(req.body.Email);
+    console.log(e);
+    res.status(400).json({
+      Error: "User with Id Already exits",
+    });
+  }
+});
+
+route.post("/Analytica/users/changePassword", isAuth,async (req, res) => {
+  try {
+   
+ req.user.Password=req.body.Password
+    await user.save();
+   
     req.token = token;
     res.status(200).json({
       status: "success",
