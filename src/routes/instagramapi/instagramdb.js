@@ -77,7 +77,7 @@ router.get('/analytica/instagram/tags/:documentId/download' ,isAuth,async (req, 
 router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => {
   try{
     console.log(req.user.Email)
-    const result=await instagramdb.find({'author':req.user.Email,status:1}).sort({'created_at':-1}).limit(5)
+    const result=await instagramdb.find({'author':req.user.Email}).sort({'created_at':-1}).limit(5)
     let finalSubmmission=[];
     result.forEach((el)=>{
       let positiveArray=[],negativeArray=[],neutralArray=[]
