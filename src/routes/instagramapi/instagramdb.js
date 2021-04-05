@@ -82,6 +82,7 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
     let finalSubmmission=[];
   // return  res.status(200).json(result[0])
     result.forEach((el)=>{
+      console.log('stage1 allDownload')
       let positiveArray=[],negativeArray=[],neutralArray=[]
       let eachElement={
           Querry:el.query,
@@ -90,7 +91,7 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
           Neutral:[],
           Time:el.updatedAt
       }
-      console.log('stage1 allDownload')
+     
         el.results.forEach((al)=>{
           console.log('stage2 allDownload')
           let eachCaptionResukt={
