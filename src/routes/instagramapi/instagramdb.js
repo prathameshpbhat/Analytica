@@ -43,7 +43,7 @@ router.post('/analytica/instagram/tags/:documentId/status', isloggedin, async (r
     }
 })
 
-router.get('/analytica/instagram/tags/:documentId/download', (req, res) => {
+router.get('/analytica/instagram/tags/:documentId/download' ,isAuth,async (req, res) => {
   instagramdb.findById(req.params.documentId).then(search => {
     if (search) {
       let positiveArray = [];
