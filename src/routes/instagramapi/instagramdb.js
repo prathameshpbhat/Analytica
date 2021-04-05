@@ -75,12 +75,12 @@ router.get('/analytica/instagram/tags/:documentId/download' ,isAuth,async (req, 
 })
 
 router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => {
-  // try{
+  try{
     console.log(req.user.Email)
     const result=await instagramdb.find({'author':req.user.Email,status:1}).sort({'created_at':-1}).limit(5)
     let submission=result
     let finalSubmmission=[];
-  // return  res.status(200).json(result[0])
+  // return  res.status(200).json(result)
     result.forEach((el)=>{
       console.log('stage1 allDownload')
       let positiveArray=[],negativeArray=[],neutralArray=[]
@@ -92,28 +92,25 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
           Time:el.updatedAt
       }
      
-        // el.results.forEach((al)=>{
-        //   console.log('stage2 allDownload')
-        //   let eachCaptionResukt={
-        //     Caption:al.caption,
-        //     Sentiment:al.sentiment
-        //   }
-        //   if(al.sentiment==="Positive"){
-        //     positiveArray.push(eachCaptionResukt)
-        //   }
-        //   else if(al.sentiment==="Negative"){
-        //     negativeArray.push(eachCaptionResukt)
-        //   }
-        //   else{
-        //     neutralArray.push(eachCaptionResukt)
-        //   }
-        // })
-        if(positiveArray.length>0)
-        eachElement.positives.push(positiveArray)
-        if(negativeArray.length>0)
-        eachElement.negatives.push(negativeArray)
-        if(neutralArray.length>0)
-        eachElement.Neutral.push(neutralArray)
+        el.results.forEach((al)=>{
+          console.log('stage2 allDownload')
+          let eachCaptionResukt={
+            Caption:al.caption,
+            Sentiment:al.sentiment
+          }
+          if(al.sentiment==="Positive"){
+            eachElement.positives.push(eachCaptionResukt)
+          }
+          else if(al.sentiment==="Negative"){
+            eachElement.negativeArray.push(eachCaptionResukt)
+            negativeArray.push(eachCaptionResukt)
+          }
+          else{
+            eachElement.neutralArray.push(eachCaptionResukt)
+          
+          }
+        })
+   
 
 console.log("check eachelelemt"+eachElement)
         finalSubmmission.push(eachElement)
@@ -121,12 +118,12 @@ console.log("check eachelelemt"+eachElement)
     })
 
     res.status(200).json(finalSubmmission)
-  // }
-// catch(e){
-//   res.send(e.status).json({
-//     Error:e.toString(),
-//   })
-// }
+  }
+catch(e){
+  res.send(e.status).json({
+    Error:e.toString(),
+  })
+}
 })
 
 
