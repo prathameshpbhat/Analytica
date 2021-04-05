@@ -92,22 +92,22 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
           Time:el.updatedAt
       }
      
-        el.results.forEach((al)=>{
-          console.log('stage2 allDownload')
-          let eachCaptionResukt={
-            Caption:al.caption,
-            Sentiment:al.sentiment
-          }
-          if(al.sentiment==="Positive"){
-            positiveArray.push(eachCaptionResukt)
-          }
-          else if(al.sentiment==="Negative"){
-            negativeArray.push(eachCaptionResukt)
-          }
-          else{
-            neutralArray.push(eachCaptionResukt)
-          }
-        })
+        // el.results.forEach((al)=>{
+        //   console.log('stage2 allDownload')
+        //   let eachCaptionResukt={
+        //     Caption:al.caption,
+        //     Sentiment:al.sentiment
+        //   }
+        //   if(al.sentiment==="Positive"){
+        //     positiveArray.push(eachCaptionResukt)
+        //   }
+        //   else if(al.sentiment==="Negative"){
+        //     negativeArray.push(eachCaptionResukt)
+        //   }
+        //   else{
+        //     neutralArray.push(eachCaptionResukt)
+        //   }
+        // })
         if(positiveArray.length>0)
         eachElement.positives.push(positiveArray)
         if(negativeArray.length>0)
