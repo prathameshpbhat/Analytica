@@ -110,7 +110,7 @@ router.get('/analytica/instagram/All/tags/download', isAuth,async (req, res) => 
         if(neutralArray.length>0)
         eachElement.Neutral.push(neutralArray)
 
-console.log(eachElement)
+console.log("check eachelelemt"+eachElement)
         finalSubmmission.push(eachElement)
 
     })
