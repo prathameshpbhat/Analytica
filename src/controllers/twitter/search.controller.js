@@ -94,6 +94,7 @@ const downloadSearchResults = (req, res) => {
 
 const downloadAllSearchResults=async (req,res)=>{
   try{
+    console.log(req.user._id)
     const result=await twitter_search.find({"Author":req.user._id}).sort({'created_at':-1}).limit(5)
     res.status(200).json(result)
   }
