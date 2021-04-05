@@ -7,13 +7,13 @@ const User = require("../models/users");
 const Nodemailer =require('../email/newemail/sendNewRegistrationEmail')
 route.post("/Analytica/users/Register", async (req, res) => {
   try {
-    Nodemailer(req.body.Email)
+   
     const user = new USER(req.body);
     const token = await user.generateAuthTokens();
     user.tokens = user.tokens.concat({ token });
 
     await user.save();
-
+    Nodemailer(req.body.Email)
     req.token = token;
     res.status(200).json({
       status: "success",

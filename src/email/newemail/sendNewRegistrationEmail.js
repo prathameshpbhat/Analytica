@@ -8,7 +8,9 @@ const SendNewregistrationEmail=async(toMail)=>{
 
 
     const transPorter=nodeMailer.createTransport({
-        service:'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, 
         auth:{
             user:mail,
             pass:pass
