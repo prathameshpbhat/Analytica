@@ -19,7 +19,6 @@ app.use(
 
 //ROUTES
 const login_route = require("./routes/login");
-const beste_route = require("./routes/beste");
 
 const twitter_feedRoute = require("./routes/twitterapi/user/feed");
 const twitter_followersRoute = require("./routes/twitterapi/user/followers");
@@ -35,7 +34,7 @@ const instagramdb = require("./routes/instagramapi/instagramdb");
 const instagramAnalysis = require("./routes/instagramapi/instagramAnalysis");
 const EmailTest = require("./routes/test/emailTest");
 //
-app.use(beste_route);
+
 app.use(login_route);
 
 app.use(twitter_feedRoute);
