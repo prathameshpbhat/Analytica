@@ -303,7 +303,7 @@ catch(e){
 
 
 
-  router.get( "/Analytica/instagram/personalprofile/getfollower",
+  router.get( "/Analytica/instagram/personalprofile/getfollowers",
   async (req, res) => {
     console.log(client)
  
@@ -316,7 +316,7 @@ catch(e){
       }
      console.log("stage2")
       const instagram = await client.getUserByUsername({
-        username: username,
+        username: "jeffbezos",
       });
       console.log("stage3")
       const followers = await client.getFollowers({ userId: instagram.id})
