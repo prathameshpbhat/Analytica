@@ -12,11 +12,12 @@ router.post('/analytica/instagram/tags/:documentId/status', isAuth, async (req, 
 
 
   let documenID = req.params.documentId;
-  console.log(documenID)
+  console.log("check datahere"+documenID)
   let data;
   try {
+    console.log(documenID)
     data = await instagramdb.findById(documenID);
-    console.log(data)
+ 
     if (data.status == 1) {
       return res.status(200).json({
         "status": "The response is ready."
