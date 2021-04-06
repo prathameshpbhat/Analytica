@@ -8,13 +8,8 @@ const instagramdb = require('../../models/instagram')
 const instagramCommentDb = require('../../models/instagramcommentschema')
 const isAuth = require("../../middleware/auth");
 
-router.post('/analytica/instagram/tags/:documentId/status', isloggedin, async (req, res) => {
+router.post('/analytica/instagram/tags/:documentId/status', isAuth, async (req, res) => {
 
-  if (!req.token) {
-    return res.status(401).send({
-      error: "user not authorised"
-    });
-  }
 
   let documenID = req.params.documentId;
   console.log(documenID)
