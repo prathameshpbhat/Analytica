@@ -250,6 +250,50 @@ const getPublicTweets = async (userid) => {
   }
 };
 
+const getPublicTweetsCommon = async (userid) => {
+  try {
+    let count = 0;
+    const api_endpoint =
+      "https://api.twitter.com/1.1/statuses/user_timeline.json";
+    // const oauth_token = req.body.oauth_token;
+    // const oauth_token_secret = req.body.oauth_token_secret;
+    let params = {
+      user_id: userid,
+      count: 100,
+      tweet_mode: "extended",
+    };
+    const options = {
+      method: "GET",
+      url: api_endpoint,
+      params: params,
+      // oauth_token: oauth_token,
+      // oauth_token_secret: oauth_token_secret
+    };
+    const config = {
+      params: params,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: oauth.generateAuthHeader(options),
+      },
+    };
+    let response = await axios.get(api_endpoint, config);
+    let tweets = response.data;
+    let all_tweets = [];
+    tweets.forEach((tweet) => {
+      all_tweets.unshift({
+        timestamp: tweet.created_at,
+        caption: tweet.full_text,
+        like_count: tweet.favorite_count,
+        comment_count: tweet.retweet_count,
+        SMedia: "twitter",
+      });
+    });
+    return Promise.resolve(all_tweets);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
 const removeOlderTweets = (tweet, index, array) => {
   return tweet.created_at < array.oldest_date;
 };
@@ -261,4 +305,5 @@ module.exports = {
   getPublicTweets,
   get10PublicTweets,
   removeOlderTweets,
+  getPublicTweetsCommon,
 };
