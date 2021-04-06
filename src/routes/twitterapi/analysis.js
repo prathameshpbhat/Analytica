@@ -8,7 +8,7 @@ const isAuth = require("../../middleware/auth");
 router.get(
   "/analytica/twitter/analysis",
   isAuth,
-  analysisController.getMetrics
+  analysisController.getAnalysis
 );
 
 router.get(
