@@ -2,7 +2,7 @@ const analysisLib = require("../../libs/analysis.js");
 
 const User_Tweets = require("../../models/twitter/user_tweets");
 
-const userTweetsHelper = require("../../libs/user_tweets");
+const userLib = require("../../libs/twitter_user");
 
 const oauth = require(`../../libs/oauthv1`);
 
@@ -32,9 +32,7 @@ const ISOtoRegular = (date) => {
 
 const get30DayPeriod = async (req, res) => {
   try {
-    const tweets = await userTweetsHelper.getNonPublicTweets(
-      "832616602352783362"
-    );
+    const tweets = await userLib.getNonPublicTweets("832616602352783362");
     if (!tweets) return res.status(404).send("user tweets not available");
 
     let today = new Date();
@@ -146,9 +144,7 @@ const getTopTweets = async (req, res) => {
 
 const getTopTweets30Days = async (req, res) => {
   try {
-    const tweets = await userTweetsHelper.getNonPublicTweets(
-      "832616602352783362"
-    );
+    const tweets = await userLib.getNonPublicTweets("832616602352783362");
     if (!tweets) return res.status(404).send("user tweets not available");
     let topTweets = [];
     topTweets = tweets
@@ -179,7 +175,7 @@ const recent_tweets = (tweets) => {
 
 const getAnalysis = async (req, res) => {
   try {
-    const tweets = await userTweetsHelper.getPublicTweets("15506669");
+    const tweets = await userLib.getPublicTweets("15506669");
 
     if (!tweets) return res.status(404).send("User doesn't have any tweets");
 
@@ -226,7 +222,7 @@ const getAnalysis = async (req, res) => {
 
 const getMetrics = async (req, res) => {
   try {
-    const tweets = await userTweetsHelper.getNonPublicTweets("15506669");
+    const tweets = await userLib.getNonPublicTweets("15506669");
 
     if (!tweets) return res.status(404).send("User doesn't have any tweets");
 

@@ -5,7 +5,7 @@ const UserTweets = require("../../../models/twitter/user_tweets");
 
 const User = require("../../../models/users");
 
-const userTweetsHelper = require("../../../libs/user_tweets");
+const userLib = require("../../../libs/twitter_user");
 
 const makeTweet = async (req, res) => {
   try {
@@ -337,15 +337,15 @@ const requestUserTweets = async (req, res) => {
       documentId = newUserTweets._id;
     }
     let all_tweets = [];
-    let non_public_tweets = await userTweetsHelper.getNonPublicTweets(userid);
-    let public_tweets = await userTweetsHelper.getPublicTweets(userid);
+    let non_public_tweets = await userLib.getNonPublicTweets(userid);
+    let public_tweets = await userLib.getPublicTweets(userid);
     let last_non_public_tweet_date = "";
     if (non_public_tweets) {
       last_non_public_tweet_date =
         non_public_tweets[non_public_tweets.length - 1].created_at;
       all_tweets = all_tweets.concat(non_public_tweets);
       public_tweets.oldest_date = last_non_public_tweet_date;
-      public_tweets = public_tweets.filter(userTweetsHelper.removeOlderTweets);
+      public_tweets = public_tweets.filter(userLib.removeOlderTweets);
       delete public_tweets["oldest_date"];
     }
     if (public_tweets) all_tweets = all_tweets.concat(public_tweets);
