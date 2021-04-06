@@ -26,10 +26,10 @@ let html;
         console.log(e)
     }
     const mailOptions={
-        from:'gowithbang@gmail.com',
+        from:mail,
         to:toMail,
-        subject:'Welcome to Analytica',
-        text:text
+        subject:'Reset Password',
+        text:'Please Change passord by Clicking link below\n'+text
     }
    
    await transPorter.sendMail(mailOptions)

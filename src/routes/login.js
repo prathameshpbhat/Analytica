@@ -141,9 +141,11 @@ route.get("/Analytica/users/ForgotPasswordOne",async (req, res) => {
     }
     let random=Math.floor(Math.random*1000000000000)
 
-    resetPasswordMail(email,url+'/Analytica/users/ForgotPasswordTwo/'+random)
+    
     user.ForgotPassword=random;
+
 await user.save();
+resetPasswordMail(email,url+'/Analytica/users/ForgotPasswordTwo/'+random)
     res.status(200).json({
       Status:"success"
     })
