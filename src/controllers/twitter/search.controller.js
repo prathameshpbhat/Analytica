@@ -8,7 +8,8 @@ const startSearch = async (req, res) => {
       "Content-Type": "application/json",
     },
   };
-  const url = "https://sentiment-analysis-micro.herokuapp.com/search";
+  const url = "http://localhost:5000/search";
+  console.log(req.user._id);
   try {
     let request_payload = {
       query: search_query,
@@ -93,14 +94,14 @@ const downloadSearchResults = (req, res) => {
 
 const downloadAllSearchResults = async (req, res) => {
   try {
-    console.log(req.user._id);
-    const result = await twitter_search
+    console.log("User Id: " + req.user._id);
+    const results = await twitter_search
       .find({ Author: req.user._id })
-      .sort({ created_at: -1 })
+      .sort({ createdAt: -1 })
       .limit(5);
-    res.status(200).json(result);
+    res.status(200).json(results);
   } catch (e) {
-    res.status(e.status).json({
+    res.status(500).json({
       Error: e.toString(),
     });
   }

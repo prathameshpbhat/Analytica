@@ -19,7 +19,7 @@ router.get(
 );
 
 router.get(
-  "/analytica/twitter/search/all/download",
+  "/analytica/twitter/search/history",
   isAuth,
   searchController.downloadAllSearchResults
 );
