@@ -280,7 +280,7 @@ const getPublicTweetsCommon = async (userid) => {
     let tweets = response.data;
     let all_tweets = [];
     tweets.forEach((tweet) => {
-      let ts=new Date(tweet.created_at).valueOf()
+      let ts = new Date(tweet.created_at).valueOf();
       all_tweets.unshift({
         timeStamp: ts,
         caption: tweet.full_text,
