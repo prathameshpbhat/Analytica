@@ -6,6 +6,8 @@ const route = express.Router();
 const User = require("../models/users");
 const Nodemailer =require('../email/newemail/sendNewRegistrationEmail')
 const isAuth = require("../middleware/auth");
+const resetPasswordMail =require('../email/resetPassword/resetPassword')
+const url='https://analytica-parsb-api.herokuapp.com'
 route.post("/Analytica/users/Register", async (req, res) => {
   try {
    
@@ -125,6 +127,37 @@ route.get("/Analytica/users/checkexists", async (req, res) => {
     });
   }
 });
+//generate randome number before deleting
 
+route.get("/Analytica/users/ForgotPasswordOne",async (req, res) => {
+  let Email=req.body.Email
+  console.log(Email)
+  try{
+    let user=await User.findOne({Email:Email})
+    if(!user){
+      return res.status(404).json({
+        Error:'User not found!'
+      })
+    }
+    let random=Math.floor(Math.random*100000000)
+  user.createIndex({"temp_index:":random},{expireAfterSeconds:3600})
+    resetPasswordMail(email,url+'/Analytica/users/ForgotPasswordTwo/'+random)
+    res.status(200).json({
+      Status:"success"
+    })
+  }
+  catch(e){
+res.status(400).json({
+  Error:e.toString()
+})
+  }
+
+ 
+});
+route.post("/Analytica/users/ForgotPasswordTwo/:id",async (req, res) => {
+let id= req.params.id;
+
+ 
+});
 
 module.exports = route;
