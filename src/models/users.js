@@ -27,6 +27,10 @@ const userSchema = mongoose.Schema({
       type: String,
     },
   },
+  ForgotPassword:{
+    type:String,
+
+  },
   twitter: {
     user_details: {},
     access_jwt: {

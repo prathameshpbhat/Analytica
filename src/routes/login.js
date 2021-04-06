@@ -139,9 +139,11 @@ route.get("/Analytica/users/ForgotPasswordOne",async (req, res) => {
         Error:'User not found!'
       })
     }
-    let random=Math.floor(Math.random*100000000)
-  user.createIndex({"temp_index:":random},{expireAfterSeconds:3600})
+    let random=Math.floor(Math.random*1000000000000)
+
     resetPasswordMail(email,url+'/Analytica/users/ForgotPasswordTwo/'+random)
+    user.ForgotPassword=random;
+await user.save();
     res.status(200).json({
       Status:"success"
     })
@@ -156,7 +158,12 @@ res.status(400).json({
 });
 route.post("/Analytica/users/ForgotPasswordTwo/:id",async (req, res) => {
 let id= req.params.id;
+try{
+  
+}
+catch(e){
 
+}
  
 });
 
