@@ -15,7 +15,7 @@ const e = require("express");
 const auth = require("../../middleware/auth");
 let username = "raunak.naik.12";
 let password ="RaunakNaik99*";
-// let password = process.env.password;
+//let password = process.env.password;
 let client;
 // (async()=>
 // {
@@ -30,7 +30,7 @@ router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
     try {
     let count = 0,
       rc = 0;
-    username = "raunak.naik.12";
+
     if (client === undefined) {
         client = new Instagram({ username, password });
          await client.login();
@@ -92,7 +92,7 @@ router.get("/analytica/instagram/real/tags/:tag", isAuth, async (req, res) => {
   console.log(tag);
  console.log(client)
     try {
-    username = "raunak.naik.12";
+ 
     if (client === undefined) {
       client = new Instagram({ username, password });
       await client.login();
@@ -125,7 +125,7 @@ router.post("/analytica/instagram/comments/:id", async (req, res) => {
     try {
     let tag = req.params.id;
 
-    username = "raunak.naik.12";
+
     if (client === undefined) {
       client = new Instagram({ username, password });
       await client.login();
@@ -173,7 +173,7 @@ router.get("/analytica/instagram/real/comments/:id", async (req, res) => {
   console.log(tag);
  console.log(client)
     try {
-    username = "raunak.naik.12";
+   
     if (client === undefined) {
       client = new Instagram({ username, password });
       await client.login();
@@ -199,7 +199,7 @@ router.get("/analytica/instagram/real/comments/:id", async (req, res) => {
 router.get("/analytica/instagram/profile/:id", async (req, res) => {
  console.log(client)
     try {
-    username = "raunak.naik.12";
+
     if (client === undefined) {
       client = new Instagram({ username, password });
       await client.login();
@@ -224,7 +224,7 @@ router.get("/analytica/instagram/profile/:id", async (req, res) => {
 router.get("/analytica/instagram/personalprofile", async (req, res) => {
  console.log(client)
     try {
-    username = "raunak.naik.12";
+
     if (client === undefined) {
       client = new Instagram({ username, password });
       await client.login();
@@ -251,7 +251,6 @@ router.get( "/analytica/instagram/personalprofile/getfeeds",
     console.log(client)
  
     try {
-      username = "raunak.naik.12";
       if (client === undefined) {
  
         client = new Instagram({ username, password });
@@ -279,7 +278,7 @@ router.post("/analytica/analysis/profile/getsimilarcharacters/:id",
     try{
 
    
-      username = "raunak.naik.12";
+  
       if (client === undefined) {
         client = new Instagram({ username, password });
         await client.login();
@@ -309,7 +308,7 @@ catch(e){
     console.log(client)
  
     try {
-      username = "raunak.naik.12";
+  
       if (client === undefined) {
  
         client = new Instagram({ username, password });
@@ -323,13 +322,13 @@ catch(e){
       const followers = await client.getFollowers({ userId: instagram.id})
       res.status(200).json(followers);
     } catch (e) {
-      if (e.status) {
-        res.status(e.statusCode).json({
-          error: e,
-        });
-        return;
-      }
-      res.status(e.statusCode).json({
+      // if (e.status) {
+      //   res.status(e.status).json({
+      //     error: e,
+      //   });
+      //   return;
+      // }
+      res.status(400).json({
         error: e,
       });
     }
