@@ -13,8 +13,8 @@ const instagramAnalytics = require("instagram-analytics");
 const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
-let username = "raunak.naik.12";
-let password ="RaunakNaik99*";
+let username = "gowithbang3";
+let password ="gowithbang99*";
 //let password = process.env.password;
 let client;
 // (async()=>
@@ -314,12 +314,13 @@ catch(e){
         client = new Instagram({ username, password });
         await client.login();
       }
-     
+     console.log("stage2")
       const instagram = await client.getUserByUsername({
         username: username,
       });
-  
+      console.log("stage3")
       const followers = await client.getFollowers({ userId: instagram.id})
+      console.log("stage4")
       res.status(200).json(followers);
     } catch (e) {
       // if (e.status) {
