@@ -300,4 +300,38 @@ catch(e){
   res.status(400).json
 }
   });
+
+
+
+  router.get( "/Analytica/instagram/personalprofile/getfollowers",
+  async (req, res) => {
+    console.log(client)
+ 
+    try {
+      username = "gowithbang3";
+      if (client === undefined) {
+ 
+        client = new Instagram({ username, password });
+        await client.login();
+      }
+     
+      const instagram = await client.getUserByUsername({
+        username: username,
+      });
+  
+      const followers = await client.getFollowers({ userId: instagram.id})
+      res.status(200).json(followers);
+    } catch (e) {
+      if (e.status) {
+        res.status(e.status).json({
+          error: e,
+        });
+        return;
+      }
+      res.status(400).json({
+        error: e,
+      });
+    }
+  }
+);
 module.exports = router;
