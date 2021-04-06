@@ -8,7 +8,7 @@ const instagramdb = require('../../models/instagram')
 const instagramCommentDb = require('../../models/instagramcommentschema')
 const isAuth = require("../../middleware/auth");
 
-router.post('/analytica/instagram/tags/:documentId/status', isAuth, async (req, res) => {
+router.get('/analytica/instagram/tags/:documentId/status', isAuth, async (req, res) => {
 
 
   let documenID = req.params.documentId;
