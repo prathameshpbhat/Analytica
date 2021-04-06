@@ -304,7 +304,7 @@ catch(e){
 
 
 
-  router.get( "/Analytica/instagram/personalprofile/getfollowers",
+  router.get( "/Analytica/instagram/personalprofile/getfollower",
   async (req, res) => {
     console.log(client)
  
