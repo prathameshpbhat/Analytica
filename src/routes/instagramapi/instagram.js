@@ -15,7 +15,7 @@ const e = require("express");
 const auth = require("../../middleware/auth");
 let username = "raunak.naik.12";
 let password ="RaunakNaik99*";
-let password = process.env.password;
+// let password = process.env.password;
 let client;
 // (async()=>
 // {
