@@ -39,7 +39,6 @@ const checkSearchStatus = async (req, res) => {
     const search = await twitter_search.findById(req.params.documentId);
     if (search) {
       if (search.status == 0) {
-    
         return res.status(204).send();
       } else if (search.status == 1) {
         return res.status(200).json({
@@ -92,23 +91,24 @@ const downloadSearchResults = (req, res) => {
     });
 };
 
-const downloadAllSearchResults=async (req,res)=>{
-  try{
-    console.log(req.user._id)
-    const result=await twitter_search.find({"Author":req.user._id}).sort({'created_at':-1}).limit(5)
-    res.status(200).json(result)
+const downloadAllSearchResults = async (req, res) => {
+  try {
+    console.log(req.user._id);
+    const result = await twitter_search
+      .find({ Author: req.user._id })
+      .sort({ created_at: -1 })
+      .limit(5);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(e.status).json({
+      Error: e.toString(),
+    });
   }
-catch(e){
-  res.status(e.status).json({
-    Error:e.toString(),
-  })
-}
-}
+};
 
 module.exports = {
-  
   startSearch,
   checkSearchStatus,
   downloadSearchResults,
-  downloadAllSearchResults
+  downloadAllSearchResults,
 };

@@ -177,15 +177,60 @@ const recent_tweets = (tweets) => {
   return { postDates, postLikes, postComments };
 };
 
-const getMetrics = async (req, res) => {
+const getAnalysis = async (req, res) => {
   try {
-    const tweets = await userTweetsHelper.getNonPublicTweets(
-      "832616602352783362"
-    );
+    const tweets = await userTweetsHelper.getPublicTweets("15506669");
 
     if (!tweets) return res.status(404).send("User doesn't have any tweets");
 
-    const user = await getUser("832616602352783362");
+    const user = await getUser("15506669");
+    let postFreq = 0;
+    let freq = 0;
+    for (let i = 0; i < tweets.length - 1; i++) {
+      const day1 = new Date(tweets[i].created_at);
+      const day2 = new Date(tweets[i + 1].created_at);
+      freq += day1.getTime() - day2.getTime();
+    }
+    postFreq = 1 / (freq / 1000 / 60 / 60 / 24 / 3);
+
+    let followers_count = 0;
+    let likes_count = 0;
+    6;
+    if (user) {
+      followers_count = user[0].followers_count;
+      likes_count = user[0].favourites_count;
+      posts_count = user[0].statuses_count;
+    }
+
+    const { postDates, postLikes, postComments } = recent_tweets(tweets);
+
+    const response = {
+      postdates: postDates,
+      postLikes: postLikes,
+      postComments: postComments,
+      postFrequency: postFreq,
+      followers: followers_count,
+      likes: likes_count,
+      posts: posts_count,
+    };
+    return res.status(200).send(response);
+  } catch (error) {
+    if (error.response) {
+      return res.status(error.response.status).send(error);
+    } else {
+      console.log(error);
+      return res.status(500).send();
+    }
+  }
+};
+
+const getMetrics = async (req, res) => {
+  try {
+    const tweets = await userTweetsHelper.getNonPublicTweets("15506669");
+
+    if (!tweets) return res.status(404).send("User doesn't have any tweets");
+
+    const user = await getUser("15506669");
     let postFreq = 0;
     for (let i = 0; i < tweets.length - 1; i++) {
       const day1 = new Date(tweets[i].created_at);
@@ -194,9 +239,9 @@ const getMetrics = async (req, res) => {
     }
     postFreq = 1 / (postFreq / 1000 / 60 / 60 / 24 / 3);
 
-    let followers_count = null;
-    let likes_count = null;
-    let posts_count = null;
+    let followers_count = 0;
+    let likes_count = 0;
+    let posts_count = 0;
     if (user) {
       followers_count = user[0].followers_count;
       likes_count = user[0].favourites_count;
@@ -294,4 +339,5 @@ module.exports = {
   get30DayPeriod,
   getTopTweets,
   getMetrics,
+  getAnalysis,
 };
