@@ -191,7 +191,7 @@ const getAnalysis = async (req, res) => {
 
     let followers_count = 0;
     let likes_count = 0;
-    6;
+
     if (user) {
       followers_count = user[0].followers_count;
       likes_count = user[0].favourites_count;
