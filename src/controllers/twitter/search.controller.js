@@ -39,7 +39,7 @@ const checkSearchStatus = async (req, res) => {
     const search = await twitter_search.findById(req.params.documentId);
     if (search) {
       if (search.status == 0) {
-        b;
+    
         return res.status(204).send();
       } else if (search.status == 1) {
         return res.status(200).json({
