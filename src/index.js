@@ -33,6 +33,7 @@ const instagramRoute = require("./routes/instagramapi/instagram");
 const instagramdb = require("./routes/instagramapi/instagramdb");
 const instagramAnalysis = require("./routes/instagramapi/instagramAnalysis");
 const EmailTest = require("./routes/test/emailTest");
+const commonSM = require("./routes/commonSM/userPosts");
 //
 
 app.use(login_route);
@@ -50,6 +51,7 @@ app.use(instagramdb);
 app.use(instagramRoute);
 app.use(instagramAnalysis);
 app.use(EmailTest);
+app.use(commonSM);
 app.listen(PORT, () => {
   console.log("server started");
 });

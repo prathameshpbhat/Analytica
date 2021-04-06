@@ -280,12 +280,13 @@ const getPublicTweetsCommon = async (userid) => {
     let tweets = response.data;
     let all_tweets = [];
     tweets.forEach((tweet) => {
+      let ts=new Date(tweet.created_at).valueOf()
       all_tweets.unshift({
-        timestamp: tweet.created_at,
+        timeStamp: ts,
         caption: tweet.full_text,
-        like_count: tweet.favorite_count,
-        comment_count: tweet.retweet_count,
-        SMedia: "twitter",
+        likeCount: tweet.favorite_count,
+        commentCount: tweet.retweet_count,
+        sMedia: "twitter",
       });
     });
     return Promise.resolve(all_tweets);

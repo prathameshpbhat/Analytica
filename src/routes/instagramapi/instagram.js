@@ -209,7 +209,7 @@ router.get("/analytica/instagram/profile/:id", async (req, res) => {
     }
     let usernameID = req.params.id;
 
-    console.log("here");
+  
     let profile = await client.getUserByUsername({ username: usernameID });
     res.status(200).json(profile);
   } catch (e) {
