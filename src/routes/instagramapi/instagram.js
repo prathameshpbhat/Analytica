@@ -49,7 +49,7 @@ router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
         let obj = {
           caption: e.node.edge_media_to_caption.edges[0].node.text,
           commentCount:e.node.edge_media_to_comment.count,
-          likeCount:e.node.edge_liked_by,
+          likeCount:e.node.edge_liked_by.count,
           timeStamp:e.node.taken_at_timestamp,
         };
         array1.push(obj);
