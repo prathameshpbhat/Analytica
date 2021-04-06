@@ -324,12 +324,12 @@ catch(e){
       res.status(200).json(followers);
     } catch (e) {
       if (e.status) {
-        res.status(e.status).json({
+        res.status(e.statusCode).json({
           error: e,
         });
         return;
       }
-      res.status(400).json({
+      res.status(e.statusCode).json({
         error: e,
       });
     }
