@@ -149,7 +149,7 @@ route.get("/Analytica/users/ForgotPasswordOne/:Email",async (req, res) => {
 
 await user.save();
 
-resetPasswordMail(Email,urlFrontEnd+'/Analytica/users/ForgotPasswordTwo/'+random)
+resetPasswordMail(Email,urlFrontEnd+'/forgotPassword/ResetPassword?Id='+random)
 
     res.status(200).json({
       Status:"success",
@@ -164,8 +164,8 @@ res.status(400).json({
 
  
 });
-route.post("/Analytica/users/ForgotPasswordTwo/:id",async (req, res) => {
-let id= req.params.id;
+route.post("/Analytica/users/ForgotPasswordTwo",async (req, res) => {
+let id= req.body.Id;
 try{
   let user=await User.findOne({ForgotPassword:id})
   
@@ -185,6 +185,7 @@ try{
       Error : "link has Expired"
     })
   }
+  console.log(req.body.Password)
   user.Password=req.body.Password;
   user.save();
   res.status(200).json({
