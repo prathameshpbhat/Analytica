@@ -13,7 +13,7 @@ const instagramAnalytics = require("instagram-analytics");
 const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
-let username = "gowithbang3";
+let username = "gowithbang2";
 let password ="gowithbang99*";
 //let password = process.env.password;
 let client;
@@ -276,7 +276,7 @@ router.get( "/analytica/instagram/personalprofile/getfeeds",
     }
   }
 );
-router.post("/analytica/analysis/profile/getsimilarcharacters/:id",
+router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
   async (req, res) => {
     try{
 
@@ -295,8 +295,22 @@ router.post("/analytica/analysis/profile/getsimilarcharacters/:id",
     console.log("here" + userId);
 
     const result = await client.getChainsData({ userId });
-    // const activity = await client.getActivity()
-    res.status(200).json(result);
+    let newArraylength5=[];
+    let dataNumber=0;
+    // result.forEach((el)=>{
+    //   if(dataNumber===4){
+    //     break;
+    //   }
+    //   dataNumber++;
+    //   newArraylength5.push(el)
+    // })
+
+    for(let i=0;i<Math.min(result.length,5);i++){
+      newArraylength5.push(result[i])
+    }
+   
+    console.log("profilepic:"+newArraylength5)
+    res.status(200).json({profilePic:instagram.profile_pic_url,chainedData:newArraylength5});
   
 }
 catch(e){

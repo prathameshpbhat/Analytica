@@ -8,7 +8,7 @@ const startSearch = async (req, res) => {
       "Content-Type": "application/json",
     },
   };
-  const url = "http://localhost:5000/search";
+  const url = "https://sentiment-analysis-micro.herokuapp.com/search";
   console.log(req.user._id);
   try {
     let request_payload = {
