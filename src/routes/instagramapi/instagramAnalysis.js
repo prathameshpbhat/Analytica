@@ -95,20 +95,24 @@ router.post("/analytica/analysis/profile/engagement/:id", isAuth, async (req, re
       (likes += e.node.edge_liked_by.count),
         (comments += e.node.edge_media_to_comment.count);
 
-      var theDate = new Date(e.node.taken_at_timestamp * 1000);
-      dateString = theDate.toGMTString();
+      var date = new Date(e.node.taken_at_timestamp * 1000);
+   
+      var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+      dateString =  ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate()))+'-'+ ((date.getMonth() > 8) ? monthNames[(date.getMonth()) ]: (monthNames[(date.getMonth() )])) ;
       postdates.push(dateString);
       postLikes.push(e.node.edge_liked_by.count);
 
       if (i == 0) {
         lastpost = e;
       } else {
-        freq += lastpost.node.taken_at_timestamp - e.node.taken_at_timestamp;
+        freq += lastpost.node.taken_at_timestamp - e.node.taken_at_timestamp/instagram.edge_owner_to_timeline_media.edges.length;
       }
       lastpost = e;
     });
     if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
-      freq =1 /(freq /60 /60 /24 /instagram.edge_owner_to_timeline_media.edges.length);
+      freq =1 /(freq /60 /60 /24 );
     }
 
     let engagement = (likes + comments) / posts / followers;
