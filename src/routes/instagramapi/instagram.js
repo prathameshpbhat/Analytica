@@ -13,7 +13,7 @@ const instagramAnalytics = require("instagram-analytics");
 const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
-let username = "gowithbang2";
+let username = "gowithbang3";
 let password ="gowithbang99*";
 //let password = process.env.password;
 let client;
@@ -296,7 +296,7 @@ router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
 
     const result = await client.getChainsData({ userId });
     // const activity = await client.getActivity()
-    res.status(200).json(result);
+    res.status(200).json({profilePic:instagram.profile_pic_url,chainedData:result});
   
 }
 catch(e){
