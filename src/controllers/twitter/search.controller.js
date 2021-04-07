@@ -8,7 +8,7 @@ const startSearch = async (req, res) => {
       "Content-Type": "application/json",
     },
   };
-  const url = "https://sentiment-analysis-micro.herokuapp.com/search";
+  const url = "http://ec2-35-154-168-64.ap-south-1.compute.amazonaws.com:5000/twitter-search";
   console.log(req.user._id);
   try {
     let request_payload = {

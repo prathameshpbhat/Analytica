@@ -1,10 +1,12 @@
 const nodeMailer=require('nodemailer')
 const { promisify } = require('util');
 const fs=require('fs')
-let mail='gowithbang@gmail.com';
-let pass="gowithbang99*"
+const mainData=require('../../jsonFileData/json')
+let mail=mainData.GmailUsername;
+let pass=mainData.GmailPassword
 var smtpTransport = require('nodemailer-smtp-transport');
 const readFile = promisify(fs.readFile);
+
 const SendNewregistrationEmail=async(toMail)=>{
 
 
@@ -26,7 +28,7 @@ let html;
         console.log(e)
     }
     const mailOptions={
-        from:'gowithbang@gmail.com',
+        from:mainData.GmailUsername,
         to:toMail,
         subject:'Welcome to Analytica',
         // text:'hello'

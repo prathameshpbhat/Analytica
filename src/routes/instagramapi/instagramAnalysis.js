@@ -10,7 +10,7 @@ const router = express.Router();
 const Instagram = require("instagram-web-api");
 let username = process.env.username;
 let password = process.env.password;
-
+const isAuth = require("../../middleware/auth");
 // router.get('/analytica/analysis/profile/engagement/:id', async (req, res) => {
 //     let username=req.params.id;
 
@@ -69,8 +69,8 @@ let password = process.env.password;
 //     //  }
 
 // })
-router.post("/analytica/analysis/profile/engagement/:id", async (req, res) => {
-  username = "gowithbang3";
+router.post("/analytica/analysis/profile/engagement/:id", isAuth, async (req, res) => {
+
 
   try {
     const client = new Instagram({ username, password });
@@ -142,7 +142,7 @@ router.post("/analytica/analysis/profile/engagement/:id", async (req, res) => {
   
   
 })
-router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
+router.post('/analytica/analysis/profile/getactivity', isAuth,async (req,res)=>{
   try{
 
   

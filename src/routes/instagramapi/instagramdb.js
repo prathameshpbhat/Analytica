@@ -44,19 +44,26 @@ router.get('/analytica/instagram/tags/:documentId/download' ,isAuth,async (req, 
     if (search) {
       let positiveArray = [];
       let negativeArray = [];
+      let neutralsArray = [];
       search.results.forEach(el => {
         if (el.sentiment == "Positive") {
           positiveArray.push(el);
         } else if (el.sentiment == "Negative") {
           negativeArray.push(el);
         }
+        else if (el.sentiment == "Neutral") {
+          neutralsArray.push(el);
+        }
+        
       })
 
       return res.status(200).json({
         positives: positiveArray,
         numberOfPositives: positiveArray.length,
         negatives: negativeArray,
-        numberOfNegatives: negativeArray.length
+        neutrals:neutralsArray,
+        numberOfNegatives: negativeArray.length,
+        numberOfNeutrals: neutralsArray.length
       })
     } else {
       return res.status(404).json({
@@ -121,7 +128,7 @@ catch(e){
 })
 
 
-router.get('/analytica/instagram/alltags', isloggedin, async (req, res) => {
+router.get('/analytica/instagram/alltags', isAuth,  async (req, res) => {
 
   if (!req.token) {
     return res.status(401).send({
@@ -160,7 +167,7 @@ router.get('/analytica/instagram/alltags', isloggedin, async (req, res) => {
 
 
 //COMMENTS
-router.get('/analytica/instagram/comments/:documentId/status', isloggedin, async (req, res) => {
+router.get('/analytica/instagram/comments/:documentId/status', isAuth,  async (req, res) => {
 
   if (!req.token) {
     return res.status(401).send({

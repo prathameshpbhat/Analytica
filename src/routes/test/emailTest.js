@@ -2,6 +2,8 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 const Nodemailer =require('../../email/newemail/sendNewRegistrationEmail')
+
+const mainData=require('../../jsonFileData/json')
 router.get("/test/testmail",async (req, res) => {
  
 
@@ -17,5 +19,9 @@ res.status(200).json({status:'email sent'})
 
 
     })
-
+router.get('/test/jsonTest',(req,res)=>{
+  res.send({
+    url:mainData.urlFrontEnd
+  })
+})
       module.exports = router;

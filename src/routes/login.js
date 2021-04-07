@@ -101,7 +101,7 @@ route.post("/Analytica/users/Logout", auth, async (req, res) => {
 });
 
 
-route.get("/Analytica/users/checkexists", async (req, res) => {
+route.get("/Analytica/users/checkexists",  isAuth,async (req, res) => {
   try {
     console.log("chechexits stage1")
     const token = req.header("Authorization").replace("Bearer ", "");

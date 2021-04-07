@@ -13,8 +13,9 @@ const instagramAnalytics = require("instagram-analytics");
 const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
-let username = "gowithbang2";
-let password ="gowithbang99*";
+const mainData=require('../../jsonFileData/json')
+let username =mainData.InstagramUsername;
+let password =mainData.InstagramPassword;
 //let password = process.env.password;
 let client;
 // (async()=>
@@ -26,7 +27,7 @@ let client;
 router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
   var tag = req.params.tag;
 
- console.log(client)
+ console.log(client,username,password)
     try {
     let count = 0,
       rc = 0;
@@ -37,6 +38,7 @@ router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
       
      
     }
+    console.log("stage1")
 
     const result = await client.getMediaFeedByHashtag({
       hashtag: tag,
@@ -62,17 +64,26 @@ router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
     //       result,
     //       rc,
     //     })
-
+    console.log("stage2")
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
     let response = await axios.post(
-      "https://sentiment-analysis-micro.herokuapp.com/insta-search",
+    mainData.urlAws+'/insta-search',
+   
       {
         Author: req.user.Email,
         results: array1,
         query: tag,
+        
       }
+      ,config
+      
     );
     console.log(response.data);
-
+    console.log("stage3")
     res.status(202).json({
       status: response.data.status,
       documentId: response.data.documentId,
@@ -123,7 +134,7 @@ router.get("/analytica/instagram/real/tags/:tag", isAuth, async (req, res) => {
   });
 });
 
-router.post("/analytica/instagram/comments/:id", async (req, res) => {
+router.post("/analytica/instagram/comments/:id", isAuth, async (req, res) => {
  console.log(client)
     try {
     let tag = req.params.id;
@@ -171,7 +182,7 @@ router.post("/analytica/instagram/comments/:id", async (req, res) => {
   }
 });
 
-router.get("/analytica/instagram/real/comments/:id", async (req, res) => {
+router.get("/analytica/instagram/real/comments/:id", isAuth, async (req, res) => {
   var tag = req.params.id;
   console.log(tag);
  console.log(client)
@@ -199,7 +210,7 @@ router.get("/analytica/instagram/real/comments/:id", async (req, res) => {
   }
 });
 
-router.get("/analytica/instagram/profile/:id", async (req, res) => {
+router.get("/analytica/instagram/profile/:id", isAuth,async (req, res) => {
  console.log(client)
     try {
 
@@ -224,7 +235,7 @@ router.get("/analytica/instagram/profile/:id", async (req, res) => {
     });
   }
 });
-router.get("/analytica/instagram/personalprofile", async (req, res) => {
+router.get("/analytica/instagram/personalprofile", isAuth, async (req, res) => {
  console.log(client)
     try {
 
@@ -249,7 +260,7 @@ router.get("/analytica/instagram/personalprofile", async (req, res) => {
     });
   }
 });
-router.get( "/analytica/instagram/personalprofile/getfeeds",
+router.get( "/analytica/instagram/personalprofile/getfeeds", isAuth,
   async (req, res) => {
     console.log(client)
  
@@ -276,7 +287,7 @@ router.get( "/analytica/instagram/personalprofile/getfeeds",
     }
   }
 );
-router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
+router.get("/analytica/analysis/profile/getsimilarcharacters/:id", isAuth,
   async (req, res) => {
     try{
 
@@ -320,7 +331,7 @@ catch(e){
 
 
 
-  router.get( "/Analytica/instagram/personalprofile/getfollowers",
+  router.get( "/Analytica/instagram/personalprofile/getfollowers", isAuth,
   async (req, res) => {
     console.log(client)
  

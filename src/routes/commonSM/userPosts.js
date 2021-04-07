@@ -13,8 +13,9 @@ const twitterUserPosts=require('../../libs/twitter_user')
 const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
-let username = "gowithbang2";
-let password ="gowithbang99*";
+const mainData=require('../../jsonFileData/json')
+let username = mainData.InstagramUsername;
+let password =mainData.InstagramPassword;
 let client;
 
 
