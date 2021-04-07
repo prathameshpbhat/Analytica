@@ -8,7 +8,8 @@ const startSearch = async (req, res) => {
       "Content-Type": "application/json",
     },
   };
-  const url = "http://ec2-35-154-168-64.ap-south-1.compute.amazonaws.com:5000/twitter-search";
+  const url =
+    "http://ec2-35-154-168-64.ap-south-1.compute.amazonaws.com:5000/twitter-search";
   console.log(req.user._id);
   try {
     let request_payload = {
@@ -65,11 +66,14 @@ const downloadSearchResults = (req, res) => {
       if (search) {
         let positiveArray = [];
         let negativeArray = [];
+        let neutralArray = [];
         search.results.forEach((el) => {
           if (el.sentiment == "Positive") {
             positiveArray.push(el);
           } else if (el.sentiment == "Negative") {
             negativeArray.push(el);
+          } else if (el.sentiment == "Neutral") {
+            neutralArray.push(el);
           }
         });
 
@@ -78,6 +82,8 @@ const downloadSearchResults = (req, res) => {
           numberOfPositives: positiveArray.length,
           negatives: negativeArray,
           numberOfNegatives: negativeArray.length,
+          neutrals: neutralArray,
+          numberOfNeutrals: neutralArray.length,
         });
       } else {
         return res.status(404).json({
