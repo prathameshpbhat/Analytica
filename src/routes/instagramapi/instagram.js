@@ -276,7 +276,7 @@ router.get( "/analytica/instagram/personalprofile/getfeeds",
     }
   }
 );
-router.post("/analytica/analysis/profile/getsimilarcharacters/:id",
+router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
   async (req, res) => {
     try{
 
