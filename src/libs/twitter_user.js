@@ -189,6 +189,64 @@ const get10PublicTweets = async (userid) => {
   }
 };
 
+const getFewPublicTweets = async (userid) => {
+  try {
+    let count = 0;
+    const api_endpoint = `https://api.twitter.com/2/users/${userid}/tweets`;
+    // const oauth_token = req.body.oauth_token;
+    // const oauth_token_secret = req.body.oauth_token_secret;
+    let params = {
+      exclude: "retweets",
+      max_results: 100,
+      "tweet.fields": "public_metrics,created_at",
+    };
+    const options = {
+      method: "GET",
+      url: api_endpoint,
+      params: params,
+      // oauth_token: oauth_token,
+      // oauth_token_secret: oauth_token_secret
+    };
+    const config = {
+      params: params,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
+      },
+    };
+    let response = await axios.get(api_endpoint, config);
+    let tweets = response.data.data;
+    let all_tweets = tweets;
+    let next_token = response.data.meta.next_token;
+    while (count < 500) {
+      params.pagination_token = next_token;
+      const options = {
+        method: "GET",
+        url: api_endpoint,
+        params: params,
+        // oauth_token: oauth_token,
+        // oauth_token_secret: oauth_token_secret
+      };
+      const config = {
+        params: params,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: oauth.generateAuthHeader(options),
+        },
+      };
+      response = await axios.get(api_endpoint, config);
+      tweets = response.data.data;
+      all_tweets = all_tweets.concat(tweets);
+      count = all_tweets.length;
+      next_token = response.data.meta.next_token;
+      if (!next_token) break;
+    }
+    return Promise.resolve(all_tweets);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
 const getPublicTweets = async (userid) => {
   try {
     let count = 0;
@@ -304,4 +362,5 @@ module.exports = {
   get10PublicTweets,
   removeOlderTweets,
   getPublicTweetsCommon,
+  getFewPublicTweets,
 };

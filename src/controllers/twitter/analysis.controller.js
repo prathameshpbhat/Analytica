@@ -165,7 +165,7 @@ const recent_tweets = (tweets, followers_count) => {
   let postDates = [];
   let postLikes = [];
   let postComments = [];
-  let i = 1;
+  let i = 0;
   tweets.forEach((tweet) => {
     engagement +=
       ((tweet.public_metrics.like_count + tweet.public_metrics.reply_count) /
@@ -173,23 +173,16 @@ const recent_tweets = (tweets, followers_count) => {
       100;
     like_count += tweet.public_metrics.like_count;
     comment_count += tweet.public_metrics.reply_count;
-    const month = new Date(tweet.created_at).toLocaleString("default", {
-      month: "long",
-    });
-    const day = new Date(tweet.created_at).getDate();
-    postDates.unshift(`${day} ${month}`);
-    postLikes.unshift(tweet.public_metrics.like_count);
-    postComments.unshift(tweet.public_metrics.reply_count);
     i++;
-    if (i > 12)
-      return {
-        postDates,
-        postLikes,
-        postComments,
-        like_count,
-        comment_count,
-        engagement,
-      };
+    if (i <= 12) {
+      const month = new Date(tweet.created_at).toLocaleString("default", {
+        month: "long",
+      });
+      const day = new Date(tweet.created_at).getDate();
+      postDates.unshift(`${day} ${month}`);
+      postLikes.unshift(tweet.public_metrics.like_count);
+      postComments.unshift(tweet.public_metrics.reply_count);
+    }
   });
   return {
     postDates,
@@ -203,11 +196,11 @@ const recent_tweets = (tweets, followers_count) => {
 
 const getAnalysis = async (req, res) => {
   try {
-    const tweets = await userLib.getPublicTweets("15506669");
+    const tweets = await userLib.getFewPublicTweets("44196397");
 
     if (!tweets) return res.status(404).send("User doesn't have any tweets");
-
-    const user = await getUser("15506669");
+    tweets.pop();
+    const user = await getUser("44196397");
     let postFreq = 0;
     let freq = 0;
     for (let i = 0; i < tweets.length - 1; i++) {
@@ -233,7 +226,7 @@ const getAnalysis = async (req, res) => {
       engagement,
     } = recent_tweets(tweets, followers_count);
 
-    const engagement_rate = engagement / posts_count;
+    const engagement_rate = (like_count + comment_count) / followers_count;
 
     const response = {
       postdates: postDates,
