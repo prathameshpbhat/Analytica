@@ -9,7 +9,7 @@ router.get("/test/testmail",async (req, res) => {
 
     let sendEmailto=req.body.Email;
     console.log(sendEmailto)
-    Nodemailer(sendEmailto)
+   await Nodemailer(sendEmailto);
     res.status(200).json({status:"best"})
 //   try{
 // await Nodemailer(sendEmailto)

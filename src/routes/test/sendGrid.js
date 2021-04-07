@@ -1,16 +1,24 @@
 const sgMail = require('@sendgrid/mail');
 const mainData=require('../../jsonFileData/json')
-const senGridSenMail=()=>{
 
-const senGridSenMail=()=>{
-sgMail.setApiKey('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');
+    const SendNewregistrationEmail=async (toMail)=>{
+sgMail.setApiKey('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');
+console.log(toMail)
 const msg = {
     from:mainData.GmailUsername,
         to:toMail,
         subject:'Welcome to Analytica',
         text:'hello'
 };
-sgMail.send(msg);
+try{
+    await sgMail.send(msg);
+    console.log('emailsent')
 }
+catch(e){
+    console.log(e)
 }
-module.exports=senGridSenMail;
+
+
+}
+
+module.exports=SendNewregistrationEmail;

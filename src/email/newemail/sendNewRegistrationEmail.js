@@ -2,68 +2,93 @@ const nodeMailer=require('nodemailer')
 const { promisify } = require('util');
 const fs=require('fs')
 const mainData=require('../../jsonFileData/json')
-let mail=mainData.GmailUsername;
-let pass=mainData.GmailPassword
-var smtpTransport = require('nodemailer-smtp-transport');
 const readFile = promisify(fs.readFile);
+const sgMail = require('@sendgrid/mail');
+const imageToBase64 = require('image-to-base64');
 
-const SendNewregistrationEmail=async(toMail)=>{
-
-
-    const transPorter=nodeMailer.createTransport(smtpTransport({
-        type: 'OAuth2',
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false, 
-        auth:{
-            user:mail,
-            pass:pass
-        }
-    }))
+    const SendNewregistrationEmail=async (toMail)=>{
+sgMail.setApiKey('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');
+console.log(toMail)
 let html;
-    try{
-     html=   await readFile('./src/email/newemail/index.html', 'utf8')
-    }
-    catch(e){
-        console.log(e)
-    }
-    const mailOptions={
-        from:mainData.GmailUsername,
-        to:toMail,
-        subject:'Welcome to Analytica',
-        // text:'hello'
-        html:html,
-        attachments: [
-            {
-            filename: 'image-1.png',
-            path: './src/email/newemail/images/image-1.png',
-            cid: 'i1@kreata.ee' //same cid value as in the html img src
-        },
-        {
-            filename: 'image-2.png',
-            path: './src/email/newemail/images/image-2.png',
-            cid: 'i2@kreata.ee' //same cid value as in the html img src
-        },
-        {
-            filename: 'image-3.png',
-            path: './src/email/newemail/images/image-3.png',
-            cid: 'i3@kreata.ee' //same cid value as in the html img src
-        },
-        {
-            filename: 'image-4.jpeg',
-            path: './src/email/newemail/images/image-4.jpeg',
-            cid: 'i4@kreata.ee' //same cid value as in the html img src
-        },
-        {
-            filename: 'image-5.png',
-            path: './src/email/newemail/images/image-5.png',
-            cid: 'i5@kreata.ee' //same cid value as in the html img src
-        },
+let img1_64 
+let img2_64 
+let img3_64 
+let img4_64 
+let img5_64 
 
-    ]
-    }
-   
-   await transPorter.sendMail(mailOptions)
+try{
+ html=   await readFile('./src/email/newemail/index.html', 'utf8')
+ img1_64 = await imageToBase64( './src/email/newemail/images/image-1.png')
+ img2_64 = await imageToBase64( './src/email/newemail/images/image-2.png')
+ img3_64 = await imageToBase64( './src/email/newemail/images/image-3.png')
+ img4_64 = await imageToBase64( './src/email/newemail/images/image-4.jpeg')
+ img5_64 = await imageToBase64( './src/email/newemail/images/image-5.png')
+
+
+
+
+}
+catch(e){
+    console.log(e)
+}
+
+const mailOptions={
+    from:mainData.GmailUsername,
+    to:toMail,
+    subject:'Welcome to Analytica',
+ 
+    html:html,
+    attachments: [
+        {
+            filename: 'image-1.png',
+            type: 'image/png',
+            content_id: 'i1@kreata.ee',
+            content: img1_64,
+            disposition: 'inline',
+ 
+    },
+    {
+        filename: 'image-2.png',
+        type: 'image/png',
+        content_id: 'i2@kreata.ee',
+        content: img2_64,
+        disposition: 'inline',
+    },
+    {
+        filename: 'image-3.png',
+        type: 'image/png',
+        content_id: 'i3@kreata.ee',
+        content: img3_64,
+        disposition: 'inline',
+    },
+    {
+        filename: 'image-4.jpeg',
+        type: 'image/jpeg',
+        content_id: 'i4@kreata.ee',
+        content: img4_64,
+        disposition: 'inline',
+    },
+    {
+        filename: 'image-5.png',
+        type: 'image/png',
+        content_id: 'i5@kreata.ee',
+        content: img5_64,
+        disposition: 'inline',
+        
+
+    },
+
+]
+}
+try{
+    await sgMail.send(mailOptions);
+    console.log('emailsent')
+}
+catch(e){
+    console.log(e)
+}
+
+
 }
 
 module.exports=SendNewregistrationEmail;
