@@ -308,7 +308,7 @@ router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
     for(let i=0;i<Math.min(result.length,5);i++){
       newArraylength5.push(result[i])
     }
-    const activity = await client.getActivity()
+   
     console.log("profilepic:"+newArraylength5)
     res.status(200).json({profilePic:instagram.profile_pic_url,chainedData:newArraylength5});
   
