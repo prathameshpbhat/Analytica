@@ -236,7 +236,7 @@ const getAnalysis = async (req, res) => {
     const engagement_rate = engagement / posts_count;
 
     const response = {
-      postDates: postDates,
+      postdates: postDates,
       postLikes: postLikes,
       postComments: postComments,
       postFrequency: postFreq.toFixed(3),
@@ -244,7 +244,7 @@ const getAnalysis = async (req, res) => {
       likes: like_count,
       comments: comment_count,
       posts: posts_count,
-      engagementRate: engagement_rate.toFixed(3),
+      engagement: engagement_rate.toFixed(3),
     };
     return res.status(200).send(response);
   } catch (error) {

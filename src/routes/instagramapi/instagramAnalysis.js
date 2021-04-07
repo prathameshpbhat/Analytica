@@ -69,106 +69,120 @@ const isAuth = require("../../middleware/auth");
 //     //  }
 
 // })
-router.post("/analytica/analysis/profile/engagement/:id", isAuth, async (req, res) => {
+router.post(
+  "/analytica/analysis/profile/engagement/:id",
+  isAuth,
+  async (req, res) => {
+    try {
+      const client = new Instagram({ username, password });
+      console.log(username + "  " + password);
+      await client.login();
+      const instagram = await client.getUserByUsername({
+        username: req.params.id,
+      });
+      // const me = await client.getUserByUsername({ username: client.credentials.username })
+      let likes = 0,
+        comments = 0,
+        followers = 0,
+        posts = 0;
+      posts = instagram.edge_owner_to_timeline_media.count;
+      followers = instagram.edge_followed_by.count;
+      let freq = 0;
+      let lastpost;
+      let postdates = [];
+      let postLikes = [];
 
+      instagram.edge_owner_to_timeline_media.edges.forEach((e, i) => {
+        (likes += e.node.edge_liked_by.count),
+          (comments += e.node.edge_media_to_comment.count);
 
-  try {
-    const client = new Instagram({ username, password });
-    console.log(username + "  " + password);
-    await client.login();
-    const instagram = await client.getUserByUsername({
-      username: req.params.id,
-    });
-    // const me = await client.getUserByUsername({ username: client.credentials.username })
-    let likes = 0,
-      comments = 0,
-      followers = 0,
-      posts = 0;
-    posts = instagram.edge_owner_to_timeline_media.count;
-    followers = instagram.edge_followed_by.count;
-    let freq = 0;
-    let lastpost;
-    let postdates = [];
-    let postLikes = [];
+        var date = new Date(e.node.taken_at_timestamp * 1000);
 
-    instagram.edge_owner_to_timeline_media.edges.forEach((e, i) => {
-      (likes += e.node.edge_liked_by.count),
-        (comments += e.node.edge_media_to_comment.count);
+        var monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+        dateString =
+          (date.getDate() > 9 ? date.getDate() : "0" + date.getDate()) +
+          "-" +
+          (date.getMonth() > 8
+            ? monthNames[date.getMonth()]
+            : monthNames[date.getMonth()]);
+        postdates.push(dateString);
+        postLikes.push(e.node.edge_liked_by.count);
 
-      var date = new Date(e.node.taken_at_timestamp * 1000);
-   
-      var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
-      dateString =  ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate()))+'-'+ ((date.getMonth() > 8) ? monthNames[(date.getMonth()) ]: (monthNames[(date.getMonth() )])) ;
-      postdates.push(dateString);
-      postLikes.push(e.node.edge_liked_by.count);
-
-      if (i == 0) {
+        if (i == 0) {
+          lastpost = e;
+        } else {
+          freq +=
+            lastpost.node.taken_at_timestamp -
+            e.node.taken_at_timestamp /
+              instagram.edge_owner_to_timeline_media.edges.length;
+        }
         lastpost = e;
-      } else {
-        freq += lastpost.node.taken_at_timestamp - e.node.taken_at_timestamp/instagram.edge_owner_to_timeline_media.edges.length;
+      });
+      if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
+        freq = 1 / (freq / 60 / 60 / 24);
       }
-      lastpost = e;
-    });
-    if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
-      freq =1 /(((((freq /60)) /60) /24) );
+
+      let engagement = (likes + comments) / posts / followers;
+      console.log(posts);
+      res.status(200).json({
+        engagement: engagement,
+        likes: likes,
+        comments: comments,
+        posts: posts,
+        followers: followers,
+        postFrequency: freq,
+        postdates: postdates,
+        postLikes: postLikes,
+      });
+    } catch (e) {
+      if (e.status) {
+        res.status(e.status).json({
+          error: e,
+        });
+        return;
+      }
+      res.status(400).json({
+        error: e,
+      });
     }
-
-    let engagement = (likes + comments) / posts / followers;
-    console.log(posts);
-    res.status(200).json({
-      engagement: engagement,
-      likes: likes,
-      comments: comments,
-      posts: posts,
-      followers: followers,
-      postFrequency: freq,
-      postdates: postdates,
-      postLikes: postLikes,
-    });
   }
-  catch(e){
-    if(e.status){
-      res.status(e.status).json({
-        'error':e,
-      })
-      return;
+);
+router.post(
+  "/analytica/analysis/profile/getactivity",
+  isAuth,
+  async (req, res) => {
+    try {
+      username = "gowithbang2";
+      const client = new Instagram({ username, password });
+      await client.login();
+      const activity = await client.getActivity();
+      res.status(200).json(activity);
+    } catch (e) {
+      if (e.status) {
+        res.status(e.status).json({
+          error: e,
+        });
+        return;
+      }
+      res.status(400).json({
+        error: e,
+      });
     }
-    res.status(400).json({
-      'error':e,
-    })
-    }
-
- 
-   
-
-  
-  
-})
-router.post('/analytica/analysis/profile/getactivity', isAuth,async (req,res)=>{
-  try{
-
-  
-  username ="gowithbang2"
-  const client = new Instagram({ username, password })
-  await client.login()
-  const activity = await client.getActivity()
-  res.status(200).json(activity)
-}
-catch(e){
-  if(e.status){
-    res.status(e.status).json({
-      'error':e,
-    })
-    return;
   }
-  res.status(400).json({
-    'error':e,
-  })
-  }
-})
-
+);
 
 // router.post('/analytica/analysis/profile/getactivity',async (req,res)=>{
 
@@ -178,7 +192,6 @@ catch(e){
 //     res.status(200).json(activity)
 
 //   })
-
 
 // router.get('/checker/analytica/analysis/profile/engagement/:id', async (req,res)=>{
 
