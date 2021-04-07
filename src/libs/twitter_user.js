@@ -181,23 +181,9 @@ const get10PublicTweets = async (userid) => {
         Authorization: oauth.generateAuthHeader(options),
       },
     };
-    let all_tweets = [];
     let response = await axios.get(api_endpoint, config);
     let tweets = response.data;
-    tweets.forEach((tweet) => {
-      all_tweets.unshift({
-        id_str: tweet.id_str,
-        user_id: tweet.user.id_str,
-        name: tweet.user.name,
-        username: tweet.user.screen_name,
-        profile_img_url: tweet.user.profile_image_url,
-        followers_count: tweet.user.followers_count,
-        following_count: tweet.user.friends_count,
-        created_at: tweet.created_at,
-        full_text: tweet.full_text,
-      });
-    });
-    return Promise.resolve(all_tweets);
+    return Promise.resolve(tweets);
   } catch (error) {
     return Promise.reject(error);
   }
