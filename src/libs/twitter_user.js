@@ -231,7 +231,7 @@ const getFewPublicTweets = async (userid) => {
         params: params,
         headers: {
           "Content-Type": "application/json",
-          Authorization: oauth.generateAuthHeader(options),
+          Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
         },
       };
       response = await axios.get(api_endpoint, config);
