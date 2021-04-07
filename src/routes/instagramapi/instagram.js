@@ -295,9 +295,17 @@ router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
     console.log("here" + userId);
 
     const result = await client.getChainsData({ userId });
+    let newArraylength5=[];
+    let dataNumber=0;
+    result.forEach((el)=>{
+      if(dataNumber===4){
+        break;
+      }
+      newArraylength5.push(el)
+    })
     // const activity = await client.getActivity()
     console.log("profilepic:"+instagram.profile_pic_url)
-    res.status(200).json({profilePic:instagram.profile_pic_url,chainedData:result});
+    res.status(200).json({profilePic:instagram.profile_pic_url,chainedData:newArraylength5});
   
 }
 catch(e){
