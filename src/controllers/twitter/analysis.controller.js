@@ -166,6 +166,20 @@ const recent_tweets = (tweets, followers_count) => {
   let postLikes = [];
   let postComments = [];
   let i = 0;
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   tweets.forEach((tweet) => {
     engagement +=
       ((tweet.public_metrics.like_count + tweet.public_metrics.reply_count) /
@@ -175,11 +189,7 @@ const recent_tweets = (tweets, followers_count) => {
     comment_count += tweet.public_metrics.reply_count;
     i++;
     if (i <= 12) {
-      const month = new Date(tweet.created_at)
-        .toLocaleString("default", {
-          month: "long",
-        })
-        .slice(0, 3);
+      const month = monthNames[new Date(tweet.created_at).getMonth()];
       const day = new Date(tweet.created_at).getDate();
       postDates.unshift(`${day} ${month}`);
       postLikes.unshift(tweet.public_metrics.like_count);
