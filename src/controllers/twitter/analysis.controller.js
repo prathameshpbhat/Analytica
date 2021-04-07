@@ -239,12 +239,12 @@ const getAnalysis = async (req, res) => {
       postDates: postDates,
       postLikes: postLikes,
       postComments: postComments,
-      postFrequency: postFreq,
+      postFrequency: postFreq.toFixed(3),
       followers: followers_count,
       likes: like_count,
       comments: comment_count,
       posts: posts_count,
-      engagementRate: engagement_rate,
+      engagementRate: engagement_rate.toFixed(3),
     };
     return res.status(200).send(response);
   } catch (error) {
