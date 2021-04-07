@@ -131,12 +131,7 @@ router.post(
         }
         lastpost = e;
       });
-      if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
-        freq = 1 / (freq / 60 / 60 / 24);
-      }
-
-      lastpost = e;
-    });
+  
     if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
       freq =1 /freq /60 /60 /24 ;
     }
