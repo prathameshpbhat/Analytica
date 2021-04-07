@@ -296,16 +296,20 @@ router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
 
     const result = await client.getChainsData({ userId });
     let newArraylength5=[];
-    let dataNumber=0;
-    result.forEach((el)=>{
-      if(dataNumber===4){
-        break;
-      }
-      dataNumber++;
-      newArraylength5.push(el)
-    })
+    // let dataNumber=0;
+    // // result.forEach((el)=>{
+    // //   if(dataNumber===4){
+    // //     break;
+    // //   }
+    // //   dataNumber++;
+    // //   newArraylength5.push(el)
+    // // })
+
+    for(let i=0;i<Math.min(result.length,5);i++){
+      newArraylength5.push(result[i])
+    }
     // const activity = await client.getActivity()
-    console.log("profilepic:"+instagram.profile_pic_url)
+    console.log("profilepic:"+newArraylength5)
     res.status(200).json({profilePic:instagram.profile_pic_url,chainedData:newArraylength5});
   
 }
