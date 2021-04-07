@@ -175,9 +175,11 @@ const recent_tweets = (tweets, followers_count) => {
     comment_count += tweet.public_metrics.reply_count;
     i++;
     if (i <= 12) {
-      const month = new Date(tweet.created_at).toLocaleString("default", {
-        month: "long",
-      });
+      const month = new Date(tweet.created_at)
+        .toLocaleString("default", {
+          month: "long",
+        })
+        .slice(0, 3);
       const day = new Date(tweet.created_at).getDate();
       postDates.unshift(`${day} ${month}`);
       postLikes.unshift(tweet.public_metrics.like_count);
