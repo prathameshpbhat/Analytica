@@ -208,11 +208,11 @@ const recent_tweets = (tweets, followers_count) => {
 
 const getAnalysis = async (req, res) => {
   try {
-    const tweets = await userLib.getFewPublicTweets("15506669");
+    const tweets = await userLib.getFewPublicTweets(15506669);
 
     if (!tweets) return res.status(404).send("User doesn't have any tweets");
-    tweets.pop();
-    const user = await getUser("15506669");
+    if (!tweets[tweets.length - 1]) tweets.pop();
+    const user = await getUser(15506669);
     let postFreq = 0;
     let freq = 0;
     for (let i = 0; i < tweets.length - 1; i++) {
@@ -238,7 +238,7 @@ const getAnalysis = async (req, res) => {
       engagement,
     } = recent_tweets(tweets, followers_count);
 
-    const engagement_rate = (like_count + comment_count) / followers_count;
+    const engagement_rate = engagement / 500;
 
     const response = {
       postdates: postDates,
