@@ -116,7 +116,7 @@ router.post("/analytica/analysis/profile/engagement/:id", isAuth, async (req, re
     }
     // freq=(freq).toFixed(4);
  
-    let engagement = ((likes + comments) / posts )/ followers;
+    let engagement = (((likes + comments) / posts )/ followers)*100;
     engagement=(eng).toFixed(4);
     console.log(posts);
     res.status(200).json({
