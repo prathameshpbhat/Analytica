@@ -301,6 +301,7 @@ router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
       if(dataNumber===4){
         break;
       }
+      dataNumber++;
       newArraylength5.push(el)
     })
     // const activity = await client.getActivity()
