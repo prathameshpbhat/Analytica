@@ -13,7 +13,7 @@ const instagramAnalytics = require("instagram-analytics");
 const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
-let username = "gowithbang3";
+let username = "gowithbang2";
 let password ="gowithbang99*";
 //let password = process.env.password;
 let client;
