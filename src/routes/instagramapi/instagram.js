@@ -296,6 +296,7 @@ router.get("/analytica/analysis/profile/getsimilarcharacters/:id",
 
     const result = await client.getChainsData({ userId });
     // const activity = await client.getActivity()
+    console.log("profilepic:"+instagram.profile_pic_url)
     res.status(200).json({profilePic:instagram.profile_pic_url,chainedData:result});
   
 }
