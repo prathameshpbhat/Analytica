@@ -135,28 +135,38 @@ router.post(
         freq = 1 / (freq / 60 / 60 / 24);
       }
 
-      let engagement = (likes + comments) / posts / followers;
-      console.log(posts);
-      res.status(200).json({
-        engagement: engagement,
-        likes: likes,
-        comments: comments,
-        posts: posts,
-        followers: followers,
-        postFrequency: freq,
-        postdates: postdates,
-        postLikes: postLikes,
-      });
-    } catch (e) {
-      if (e.status) {
-        res.status(e.status).json({
-          error: e,
-        });
-        return;
-      }
-      res.status(400).json({
-        error: e,
-      });
+      lastpost = e;
+    });
+    if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
+      freq =1 /freq /60 /60 /24 ;
+    }
+    // freq=(freq).toFixed(4);
+ 
+    let engagement = (((likes + comments) / posts )/ followers)*100;
+    engagement=(eng).toFixed(4);
+    console.log(posts);
+    res.status(200).json({
+      engagement: engagement,
+      likes: likes,
+      comments: comments,
+      posts: posts,
+      followers: followers,
+      postFrequency: freq,
+      postdates: postdates,
+      postLikes: postLikes,
+    });
+  }
+  catch(e){
+    if(e.status){
+      res.status(e.status).json({
+        'error':e,
+      })
+      return;
+    }
+    res.status(400).json({
+      'error':e,
+    })
+
     }
   }
 );
