@@ -35,7 +35,6 @@ const getUser = async (username) => {
 const getFollowing = async (userid) => {
   try {
     let following = [];
-    let next_token = "";
     const api_endpoint = `https://api.twitter.com/2/users/${userid}/following`;
 
     let params = {
@@ -160,14 +159,13 @@ const getNonPublicTweets = async (userid) => {
 const get10PublicTweets = async (userid) => {
   try {
     let count = 0;
-    const api_endpoint = `https://api.twitter.com/2/users/${userid}/tweets`;
+    const api_endpoint = `https://api.twitter.com/1.1/statuses/user_timeline.json`;
     // const oauth_token = req.body.oauth_token;
     // const oauth_token_secret = req.body.oauth_token_secret;
     let params = {
-      expansions: "in_reply_to_user_id,referenced_tweets.id",
-      exclude: "retweets",
-      max_results: 10,
-      "tweet.fields": "public_metrics,created_at,conversation_id",
+      user_id: userid,
+      count: 10,
+      tweet_mode: "extended",
     };
     const options = {
       method: "GET",
@@ -184,9 +182,8 @@ const get10PublicTweets = async (userid) => {
       },
     };
     let response = await axios.get(api_endpoint, config);
-    let tweets = response.data.data;
-    let all_tweets = tweets;
-    return Promise.resolve(all_tweets);
+    let tweets = response.data;
+    return Promise.resolve(tweets);
   } catch (error) {
     return Promise.reject(error);
   }
