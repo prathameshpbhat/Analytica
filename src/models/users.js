@@ -46,6 +46,7 @@ const userSchema = mongoose.Schema({
       ref: "user_tweets",
     },
   },
+ 
   tokens: [
     {
       token: {
@@ -54,6 +55,10 @@ const userSchema = mongoose.Schema({
       },
     },
   ],
+
+},
+{
+  timestamps: true
 });
 
 userSchema.methods.generateAuthTokens = async function () {

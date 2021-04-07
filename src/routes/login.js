@@ -8,6 +8,7 @@ const Nodemailer =require('../email/newemail/sendNewRegistrationEmail')
 const isAuth = require("../middleware/auth");
 const resetPasswordMail =require('../email/resetPassword/resetPassword')
 const url='https://analytica-parsb-api.herokuapp.com'
+const urlFrontEnd='analytica-front.herokuapp.com'
 route.post("/Analytica/users/Register", async (req, res) => {
   try {
    
@@ -129,25 +130,30 @@ route.get("/Analytica/users/checkexists", async (req, res) => {
 });
 //generate randome number before deleting
 
-route.get("/Analytica/users/ForgotPasswordOne",async (req, res) => {
-  let Email=req.body.Email
+route.get("/Analytica/users/ForgotPasswordOne/:Email",async (req, res) => {
+  let Email=req.params.Email
   console.log(Email)
   try{
     let user=await User.findOne({Email:Email})
+   
     if(!user){
       return res.status(404).json({
         Error:'User not found!'
       })
     }
-    let random=Math.floor(Math.random*1000000000000)
+ 
+    let random=Math.floor(Math.random()*1000000000000)
 
     
     user.ForgotPassword=random;
 
 await user.save();
-resetPasswordMail(email,url+'/Analytica/users/ForgotPasswordTwo/'+random)
+
+resetPasswordMail(Email,urlFrontEnd+'/Analytica/users/ForgotPasswordTwo/'+random)
+
     res.status(200).json({
-      Status:"success"
+      Status:"success",
+ 
     })
   }
   catch(e){
@@ -161,9 +167,40 @@ res.status(400).json({
 route.post("/Analytica/users/ForgotPasswordTwo/:id",async (req, res) => {
 let id= req.params.id;
 try{
+  let user=await User.findOne({ForgotPassword:id})
   
+  if(!user){
+    return res.status(404).json({
+      Error:'User not found'
+    })
+  }
+  let datum = Date.parse(user.updatedAt);
+  datum=  datum/1000;
+  let currentDate=new Date()
+   currentDate = Date.parse(currentDate);
+  currentDate=  currentDate/1000;
+
+  if(currentDate-datum>(60*60)){
+    return res.status(404).json({
+      Error : "link has Expired"
+    })
+  }
+  user.Password=req.body.Password;
+  user.save();
+  res.status(200).json({
+    status:'Success'
+  })
 }
 catch(e){
+  if(e.statusCode){
+    return res.status(e.statusCode).json({
+      Error:e
+    })
+  }
+  return res.status(400).json({
+    Error:e
+  })
+  
 
 }
  

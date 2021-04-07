@@ -18,18 +18,12 @@ const ResetPasswordMail=async(toMail,text)=>{
             pass:pass
         }
     }))
-let html;
-    try{
-     html=   await readFile('./src/email/newemail/index.html', 'utf8')
-    }
-    catch(e){
-        console.log(e)
-    }
+
     const mailOptions={
         from:mail,
         to:toMail,
         subject:'Reset Password',
-        text:'Please Change passord by Clicking link below\n'+text
+        text:'Please Change passord by Clicking link below,If not requested by you than ignore the message\n'+text
     }
    
    await transPorter.sendMail(mailOptions)
