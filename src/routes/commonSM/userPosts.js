@@ -45,7 +45,7 @@ router.get('/Analytica/commonPosts/getPosts',async (req,res)=>{
                 obj.caption=el.node.edge_media_to_caption.edges[0].node.text;
                 obj.commentCount=el.node.edge_media_to_comment.count,
                 obj.likeCount=el.node.edge_liked_by.count,
-                obj.timeStamp=el.node.taken_at_timestamp
+                obj.timeStamp=el.node.taken_at_timestamp*1000
                obj.sMedia='Instagram'
 
             }
