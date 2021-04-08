@@ -73,7 +73,7 @@ router.post(
   "/analytica/analysis/profile/engagement/:id",
   isAuth,
   async (req, res) => {
-    try {
+    // try {
       const client = new Instagram({ username, password });
       console.log(username + "  " + password);
       await client.login();
@@ -150,19 +150,19 @@ router.post(
       postdates: postdates,
       postLikes: postLikes,
     });
-  }
-  catch(e){
-    if(e.status){
-      res.status(e.status).json({
-        'error':e,
-      })
-      return;
-    }
-    res.status(400).json({
-      'error':e,
-    })
+  // }
+  // catch(e){
+  //   if(e.status){
+  //     res.status(e.status).json({
+  //       'error':e,
+  //     })
+  //     return;
+  //   }
+  //   res.status(400).json({
+  //     'error':e,
+  //   })
 
-    }
+  //   }
   }
 );
 router.post(
