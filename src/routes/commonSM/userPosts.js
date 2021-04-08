@@ -21,7 +21,7 @@ let client;
 
 router.get('/Analytica/commonPosts/getPosts',async (req,res)=>{
     let array=[]
-    const result
+    let result
     try{
        result= await twitterUserPosts.getPublicTweetsCommon(15506669);
       if (client === undefined) {
