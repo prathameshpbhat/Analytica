@@ -22,7 +22,7 @@ let client;
 router.get('/Analytica/commonPosts/getPosts',async (req,res)=>{
     let array=[]
     let result
-    try{
+    // try{
        result= await twitterUserPosts.getPublicTweetsCommon(15506669);
       if (client === undefined) {
         client = new Instagram({ username, password });
@@ -67,14 +67,14 @@ router.get('/Analytica/commonPosts/getPosts',async (req,res)=>{
             return a.timeStamp-b.timeStamp;
         }));
       res.status(200).json(ultmateArray)
-    }
-    catch(e){
-      if(e.statusCode){
-     return   res.status(e.statusCode).json({'Error':e})
-      }
-      res.status(403).json({'Error':e})
+    // }
+    // catch(e){
+    //   if(e.statusCode){
+    //  return   res.status(e.statusCode).json({'Error':e})
+    //   }
+    //   res.status(403).json({'Error':e})
 
-    }
+    // }
 })
 
 module.exports = router;
