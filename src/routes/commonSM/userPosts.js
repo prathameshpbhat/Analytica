@@ -21,8 +21,9 @@ let client;
 
 router.get('/Analytica/commonPosts/getPosts',async (req,res)=>{
     let array=[]
+    const result
     try{
-      const result= await twitterUserPosts.getPublicTweetsCommon(15506669);
+       result= await twitterUserPosts.getPublicTweetsCommon(15506669);
       if (client === undefined) {
         client = new Instagram({ username, password });
         await client.login();
@@ -69,7 +70,7 @@ router.get('/Analytica/commonPosts/getPosts',async (req,res)=>{
     }
     catch(e){
       if(e.statusCode){
-        res.status(e.statusCode).json({'Error':e})
+     return   res.status(e.statusCode).json({'Error':e})
       }
       res.status(403).json({'Error':e})
 
