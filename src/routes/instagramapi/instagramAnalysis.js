@@ -138,7 +138,7 @@ router.post(
     // freq=(freq).toFixed(4);
  
     let engagement = (((likes + comments) / posts )/ followers)*100;
-    engagement=(eng).toFixed(4);
+    engagement=(engagement).toFixed(4);
     console.log(posts);
     res.status(200).json({
       engagement: engagement,
