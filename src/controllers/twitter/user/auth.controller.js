@@ -104,14 +104,14 @@ const startLogin = async (req, res) => {
     const params = new URLSearchParams();
     params.append(
       "oauth_callback",
-      "https://analytica-front.herokuapp.com/twitter/login-next"
+      "http://analytica-front.herokuapp.com/Dashboard/twitter/login-next"
     );
     const options = {
       method: "POST",
       url: api_endpoint,
       params: {
         oauth_callback:
-          "https://analytica-front.herokuapp.com/twitter/login-next",
+          "http://analytica-front.herokuapp.com/Dashboard/twitter/login-next",
       },
     };
     const headers = {
