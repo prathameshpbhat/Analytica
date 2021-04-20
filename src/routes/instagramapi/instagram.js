@@ -17,6 +17,16 @@ const mainData=require('../../jsonFileData/json')
 let username =mainData.InstagramUsername;
 let password =mainData.InstagramPassword;
 //let password = process.env.password;
+
+
+const InstagramGraphApi =require('node-instagram').default;
+const instagramGraphApi = new InstagramGraphApi({
+  clientId: '527692674858952',
+  clientSecret: '53c3e4f2417c272e83e45fb36430240a',
+  accessToken: 'IGQVJVUDBwd0x0REdJT2ZAKVm90TEhtbWprR09yWm9PV3hrYU5CQ3dkS21HdXEycVdoZADUwV0N0NnNVX2dFcGNwalFvREE2Q1FkSDBkNENhdDV3UTBGdWd3MERicFFTcWdrY2dfXzBvU3k0YTk1YUR5SgZDZD',
+});
+ 
+
 let client;
 // (async()=>
 // {
@@ -363,4 +373,22 @@ catch(e){
     }
   }
 );
+
+
+
+router.get('/Analytica/instagram/GraphApi',(req,res)=>{
+  instagramGraphApi.get('users/self', (err, data) => {
+    if (err) {
+      // an error occured
+    res.status(401).json({
+      "Error":err
+    })
+    } else {
+      res.status(200).json({
+        data
+      })
+    }
+  });
+
+})
 module.exports = router;
