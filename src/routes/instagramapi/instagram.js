@@ -17,13 +17,13 @@ const mainData=require('../../jsonFileData/json')
 let username =mainData.InstagramUsername;
 let password =mainData.InstagramPassword;
 //let password = process.env.password;
-
+const redirectUri = 'https://analytica-front.herokuapp.com/';
 
 const InstagramGraphApi =require('node-instagram').default;
 const instagramGraphApi = new InstagramGraphApi({
   clientId: '527692674858952',
   clientSecret: '53c3e4f2417c272e83e45fb36430240a',
-  accessToken: 'IGQVJVUDBwd0x0REdJT2ZAKVm90TEhtbWprR09yWm9PV3hrYU5CQ3dkS21HdXEycVdoZADUwV0N0NnNVX2dFcGNwalFvREE2Q1FkSDBkNENhdDV3UTBGdWd3MERicFFTcWdrY2dfXzBvU3k0YTk1YUR5SgZDZD',
+  accessToken: 'IGQVJYRjRaeF8tR2ZALaTRSajhVWlF0SnNIZA19PX1JMSE5LczdoRFZAOWmZAINmwyZAmVQSVZA4M19PYndKZA1NFSFRZAOVJwOExhQU5xUUlPWU1yUWRwV1lFRDJIdGxzamstbzBrS1NVSC1KX1NsWTZAPbXN0ZAgZDZD',
 });
  
 
@@ -376,19 +376,18 @@ catch(e){
 
 
 
-router.get('/Analytica/instagram/GraphApi',(req,res)=>{
-  instagramGraphApi.get('users/self', (err, data) => {
-    if (err) {
-      // an error occured
-    res.status(401).json({
-      "Error":err
-    })
-    } else {
-      res.status(200).json({
-        data
-      })
-    }
-  });
+router.get('/auth/instagram', (req, res) => {
+  res.redirect(instagramGraphApi.getAuthorizationUrl(redirectUri, { scope: ['basic'] }));
+});
 
-})
+// Handle auth code and get access_token for user
+router.get('/auth/instagram/callback', async (req, res) => {
+  try {
+    const data = await instagramGraphApi.authorizeUser(req.query.code, redirectUri);
+    // access_token in data.access_token
+    res.json(data);
+  } catch (err) {
+    res.json(err);
+  }
+});
 module.exports = router;
