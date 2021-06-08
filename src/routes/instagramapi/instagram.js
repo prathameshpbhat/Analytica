@@ -17,7 +17,7 @@ const mainData=require('../../jsonFileData/json')
 let username =mainData.InstagramUsername;
 let password =mainData.InstagramPassword;
 //let password = process.env.password;
-const redirectUri = 'https://analytica-front.herokuapp.com/';
+const redirectUri = 'https://analytica-front.herokuapp.com/Dashboard';
 
 const InstagramGraphApi =require('node-instagram').default;
 const instagramGraphApi = new InstagramGraphApi({
@@ -374,20 +374,48 @@ catch(e){
   }
 );
 
-
-
-router.get('/auth/instagram', (req, res) => {
-  res.redirect(instagramGraphApi.getAuthorizationUrl(redirectUri, { scope: ['basic'] }));
-});
-
-// Handle auth code and get access_token for user
-router.get('/auth/instagram/callback', async (req, res) => {
-  try {
-    const data = await instagramGraphApi.authorizeUser(req.query.code, redirectUri);
-    // access_token in data.access_token
-    res.json(data);
-  } catch (err) {
-    res.json(err);
+router.post('/Analytica/instagram/InstgarmPost',async (req,res)=>{
+let photo=req.body.photo;
+let caption=req.body.caption
+console.log(caption)
+try{
+  if (client === undefined) {
+ 
+    client = new Instagram({ username, password });
+    await client.login();
   }
+  if(photo==""||photo==null||photo==undefined){
+    photo='https://images.unsplash.com/photo-1622915984758-e4ac40643c39?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80'
+  }
+  const { media }= await client.uploadPhoto({ photo, caption: caption, post: 'feed' })
+    res.status(200).json({
+      msg:"success",
+      data:`https://www.instagram.com/p/${media.code}/`
+    })
+}
+catch(e){
+  res.status(400).json({
+    msg:e
+  })
+}
+})
+
+router.get('/auth/instagram',async (req, res) => {
+
 });
+
+// // Handle auth code and get access_token for user
+// router.get('/auth/instagram/callback', async (req, res) => {
+//   try {
+//     const data = await instagramGraphApi.authorizeUser(req.query.code, redirectUri);
+//     // access_token in data.access_token
+//     res.json(data);
+//   } catch (err) {
+//     res.json(err);
+//   }
+// });
+
+// instagram.get('users/self', (err, data) => {
+//   console.log(data);
+// });
 module.exports = router;
