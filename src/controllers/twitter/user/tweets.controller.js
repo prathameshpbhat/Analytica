@@ -5,14 +5,15 @@ const UserTweets = require("../../../models/twitter/user_tweets");
 
 const User = require("../../../models/users");
 
+const twitterUploadLib = require("../../../libs/twitter_upload");
+
 const userLib = require("../../../libs/twitter_user");
 
 const makeTweet = async (req, res) => {
   try {
-    // const oauth_token = req.body.oauth_token;
-    // const oauth_token_secret = req.body.oauth_token_secret;
     const api_endpoint = `https://api.twitter.com/1.1/statuses/update.json`;
-    const options = {
+
+    let options = {
       method: "POST",
       url: api_endpoint,
       params: {
@@ -21,19 +22,67 @@ const makeTweet = async (req, res) => {
       // oauth_token: oauth_token,
       // oauth_token_secret: oauth_token_secret
     };
+
+    const params = new URLSearchParams();
+    params.append("status", req.body.status);
+
+    if (req.file) {
+      const file = req.file.buffer.toString("base64");
+
+      const media_id = await twitterUploadLib.init(
+        req.file.size,
+        req.file.mimetype
+      );
+
+      const fileSize = file.length;
+
+      console.log("media_id = " + media_id);
+
+      let chunkSize = 1024 * 1024;
+      let chunks = Math.ceil(fileSize / chunkSize, chunkSize);
+      let chunk = 0;
+
+      console.log("base64 file size...", fileSize);
+      console.log("chunks...", chunks);
+
+      let offset = 0;
+      let newOffset = 0;
+      let chunkArray = [];
+      while (chunk < chunks) {
+        console.log("current chunk..", chunk);
+        console.log("offset...", chunk * chunkSize);
+        console.log("file blob from offset...", offset);
+        if (offset + chunkSize > fileSize)
+          newOffset = offset + (fileSize - offset);
+        else newOffset = offset + chunkSize;
+        chunkArray.push(file.slice(offset, newOffset));
+        offset = newOffset;
+        chunk++;
+      }
+
+      await twitterUploadLib.append(chunkArray, media_id);
+
+      const finalizeResponse = await twitterUploadLib.finalize(media_id);
+
+      console.log(finalizeResponse);
+
+      options.params.media_ids = media_id;
+      params.append("media_ids", media_id);
+    }
+    // const oauth_token = req.body.oauth_token;
+    // const oauth_token_secret = req.body.oauth_token_secret;
     const headers = {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Authorization: oauth.generateAuthHeader(options),
       },
     };
-    const params = new URLSearchParams();
-    params.append("status", req.body.status);
     const response = await axios.post(api_endpoint, params, headers);
     return res.status(res.statusCode).json(response.data);
   } catch (error) {
     if (error.response) {
-      return res.status(error.response.status).json(error);
+      console.log(error.response.data.errors);
+      return res.status(error.response.status).send(error.response.data);
     } else {
       console.log(error);
       return res.status(500).send();

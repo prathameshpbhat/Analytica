@@ -3,13 +3,14 @@ const router = express.Router();
 const isAuth = require("../../../middleware/auth");
 
 const tweetsController = require("../../../controllers/twitter/user/tweets.controller");
-// const mediaUploadController = require("../../../controllers/twitter/user/media_upload.controller");
+const fileUpload = require("../../../middleware/twitter_upload");
 // All the api requests
 
 // MAKE TWEET (Post status)
 router.post(
   "/analytica/twitter/personal/update-status",
   isAuth,
+  fileUpload,
   tweetsController.makeTweet
 );
 
