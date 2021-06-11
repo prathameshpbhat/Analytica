@@ -14,6 +14,7 @@ const Instagram = require("instagram-web-api");
 const e = require("express");
 const auth = require("../../middleware/auth");
 const mainData=require('../../jsonFileData/json')
+const instaUpoad=require('../../middleware/instagram_upload')
 let username =mainData.InstagramUsername;
 let password =mainData.InstagramPassword;
 //let password = process.env.password;
@@ -374,10 +375,11 @@ catch(e){
   }
 );
 
-router.post('/Analytica/instagram/InstgarmPost',async (req,res)=>{
-let photo=req.body.photo;
-let caption=req.body.caption
+router.post('/Analytica/instagram/InstgarmPost',instaUpoad,async (req,res)=>{
+  const photo = req.file.buffer.toString("base64");
+let caption=req.body.status
 console.log(caption)
+console.log(photo)
 try{
   if (client === undefined) {
  
