@@ -380,6 +380,7 @@ router.post('/Analytica/instagram/InstgarmPost',instaUpoad,async (req,res)=>{
 let caption=req.body.status
 console.log(caption)
 console.log(photo)
+//
 // try{
 //   if (client === undefined) {
  
