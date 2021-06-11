@@ -375,8 +375,8 @@ catch(e){
   }
 );
 
-router.post('/Analytica/instagram/InstgarmPost',instaUpoad,async (req,res)=>{
-  const photo = req.file.buffer.toString("base64");
+router.post('/Analytica/instagram/InstgarmPost',async (req,res)=>{
+  const photo = req.file
 let caption=req.body.status
 console.log(caption)
 console.log(photo)
