@@ -375,32 +375,34 @@ catch(e){
   }
 );
 
-router.post('/Analytica/instagram/InstgarmPost',async (req,res)=>{
-  let photo = req.file
+router.post('/Analytica/instagram/InstgarmPost',instaUpoad,async (req,res)=>{
+  const photo =   path.parse(req.file.filename);
 let caption=req.body.status
 console.log(caption)
 console.log(photo)
-try{
-  if (client === undefined) {
+// try{
+//   if (client === undefined) {
  
-    client = new Instagram({ username, password });
-    await client.login();
-  }
-  if(photo==""||photo==null||photo==undefined){
-    photo='https://images.unsplash.com/photo-1622915984758-e4ac40643c39?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80'
-  }
-  const { media }= await client.uploadPhoto({ photo, caption: caption, post: 'feed' })
-    res.status(200).json({
-      msg:"success",
-      data:`https://www.instagram.com/p/${media.code}/`
-    })
-}
-catch(e){
-  console.log(e)
-  res.status(400).json({
-    msg:e
-  })
-}
+//     client = new Instagram({ username, password });
+//     await client.login();
+//   }
+//   if(photo==""||photo==null||photo==undefined){
+//     photo='https://images.unsplash.com/photo-1622915984758-e4ac40643c39?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80'
+//   }
+//   const { media }= await client.uploadPhoto({ photo, caption: caption, post: 'feed' })
+//     res.status(200).json({
+//       msg:"success",
+//       data:`https://www.instagram.com/p/${media.code}/`
+//     })
+// }
+// catch(e){
+//   res.status(400).json({
+//     msg:e
+//   })
+// }
+res.status(200).json({
+  msg:"success"
+})
 })
 
 router.get('/auth/instagram',async (req, res) => {
