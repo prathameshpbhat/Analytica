@@ -9,7 +9,7 @@ const startSearch = async (req, res) => {
     },
   };
   const url =
-    "http://ec2-35-154-168-64.ap-south-1.compute.amazonaws.com:5000/twitter-search";
+    "http://ec2-13-232-103-177.ap-south-1.compute.amazonaws.com:5000/twitter-search";
   console.log(req.user._id);
   try {
     let request_payload = {
