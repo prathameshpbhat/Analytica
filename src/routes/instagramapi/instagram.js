@@ -18,6 +18,8 @@ const instaUpoad=require('../../middleware/instagram_upload')
 const path=require('path')
 let username =mainData.InstagramUsername;
 let password =mainData.InstagramPassword;
+let rapidAPIUrlxrapidapikey=mainData.rapidAPIUrlxrapidapikey
+let xrapidapihost=mainData.xrapidapihost
 //let password = process.env.password;
 const redirectUri = 'https://analytica-front.herokuapp.com/Dashboard';
 
@@ -39,44 +41,57 @@ let client;
 router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
   var tag = req.params.tag;
 
- console.log(client,username,password)
+//  console.log(client,username,password)
     try {
     let count = 0,
       rc = 0;
 
-    if (client === undefined) {
-        client = new Instagram({ username, password });
-         await client.login();
+    // if (client === undefined) {
+    //     client = new Instagram({ username, password });
+    //      await client.login();
       
      
-    }
+    // }
     console.log("stage1")
+    var axios = require("axios").default;
 
-    const result = await client.getMediaFeedByHashtag({
-      hashtag: tag,
-      first: 150,
+    var options = {
+      method: 'GET',
+      url: 'https://instagram-data1.p.rapidapi.com/hashtag/feed',
+      params: {hashtag: tag},
+      headers: {
+        'x-rapidapi-key': rapidAPIUrlxrapidapikey,
+        'x-rapidapi-host': xrapidapihost
+      }
+    };
+    let response_uncleaned
+    try{
+      response_uncleaned=  await axios.request(options)
+    }
+catch(e){
+     return res.status(400).json({
+      error: e,
     });
+}
+let result=response_uncleaned.data
+    // const result = await client.getMediaFeedByHashtag({
+    //   hashtag: tag,
+    //   first: 150,
+    // });
     let array1 = [];
-    result.edge_hashtag_to_media.edges.forEach((e) => {
+    result.collector.forEach((e) => {
       count++;
-      if (e.node.edge_media_to_caption.edges[0]) {
+      
         let obj = {
-          caption: e.node.edge_media_to_caption.edges[0].node.text,
-          commentCount:e.node.edge_media_to_comment.count,
-          likeCount:e.node.edge_liked_by.count,
-          timeStamp:e.node.taken_at_timestamp*1000,
-        };
+          caption: e.description,
+          commentCount:e.comments,
+          likeCount:e.likes,
+          timeStamp:e.taken_at_timestamp*1000,
+        }
         array1.push(obj);
       }
-    });
-
-    // rc=array1.length
-    //     console.log(req.body.user);
-    //     res.send({
-    //       result,
-    //       rc,
-    //     })
-    console.log("stage2")
+    );
+    rc=array1.length
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -102,12 +117,12 @@ router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
     });
   } catch (e) {
     if (e.status) {
-      res.status(e.status).json({
+    return  res.status(e.status).json({
         error: e,
       });
       return;
     }
-    res.status(400).json({
+  return  res.status(400).json({
       error: e,
     });
   }
