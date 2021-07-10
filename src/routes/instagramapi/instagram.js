@@ -54,6 +54,7 @@ router.post("/analytica/instagram/search/:tag", isAuth,async (req, res) => {
     // }
     console.log("stage1")
     var axios = require("axios").default;
+tag=tag.replace(/\s/g, "");
 
     var options = {
       method: 'GET',
