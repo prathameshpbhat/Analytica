@@ -18,8 +18,8 @@ const instaUpoad=require('../../middleware/instagram_upload')
 const path=require('path')
 let username =mainData.InstagramUsername;
 let password =mainData.InstagramPassword;
-let rapidAPIUrlxrapidapikey=mainData.rapidAPIUrlxrapidapikey
-let xrapidapihost=mainData.xrapidapihost
+let rapidAPIUrlxrapidapikey=mainData.rapidAPIUrlxrapidapikey2
+let xrapidapihost=mainData.xrapidapihost2
 //let password = process.env.password;
 const redirectUri = 'https://analytica-front.herokuapp.com/Dashboard';
 
