@@ -9,7 +9,9 @@ const allNeededDataSets={
     GmailUsername:'gowithbang@gmail.com',
     GmailPassword:'gowithbang99*',
     rapidAPIUrlxrapidapikey:'f61ae010a1msh80beb9ddd76e8d5p1c8497jsn1c4f5a9623a0',
-    xrapidapihost:'instagram-data1.p.rapidapi.com'
+    xrapidapihost:'instagram-data1.p.rapidapi.com',
+       rapidAPIUrlxrapidapikey2:'f61ae010a1msh80beb9ddd76e8d5p1c8497jsn1c4f5a9623a0',
+    xrapidapihost2:'instagram-data1.p.rapidapi.com'
 
 
 
