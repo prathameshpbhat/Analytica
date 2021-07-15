@@ -135,7 +135,7 @@ router.post(
     if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
       freq =1 /(freq /60 /60 /24) ;
     }
-    freq=(freq).toFixed(4);
+    freq=(freq).toFixed(8);
  
     let engagement = (((likes + comments) / posts )/ followers)*100;
     engagement=(engagement).toFixed(4);
