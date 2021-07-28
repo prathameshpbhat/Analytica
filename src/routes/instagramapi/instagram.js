@@ -345,13 +345,17 @@ router.get("/analytica/analysis/profile/getsimilarcharacters/:id", isAuth,
     // })
 
     for(let i=0;i<Math.min(result.length,5);i++){
+      let image = await axios.get( result[i].profile_pic_url, {responseType: 'arraybuffer'});
+      let raw = Buffer.from(image.data).toString('base64');
+      let profile_pic="data:" + image.headers["content-type"] + ";base64,"+raw;
+      result[i].profile_pic_url=profile_pic
       newArraylength5.push(result[i])
     }
-   
-    console.log("profilepic:"+newArraylength5)
     let image = await axios.get(instagram.profile_pic_url, {responseType: 'arraybuffer'});
-let raw = Buffer.from(image.data).toString('base64');
-let profile_pic="data:" + image.headers["content-type"] + ";base64,"+raw;
+    let raw = Buffer.from(image.data).toString('base64');
+    let profile_pic="data:" + image.headers["content-type"] + ";base64,"+raw;
+    console.log("profilepic:"+newArraylength5)
+
     res.status(200).json({profilePic:profile_pic ,chainedData:newArraylength5});
   
 }
