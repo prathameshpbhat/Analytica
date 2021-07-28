@@ -1,7 +1,7 @@
 const allNeededDataSets={
     urlAws:'http://ec2-13-232-103-177.ap-south-1.compute.amazonaws.com:5000/',
     urlFrontEnd:'https://analytica-front.herokuapp.com',
-    InstagramUsername:'gowithbang3',
+    InstagramUsername:'gowithbang2',
     InstagramPassword:'gowithbang99*',
     InstagramSearch:'jeffbezos',
     TwitterUsername:'',
