@@ -384,13 +384,13 @@ catch(e){
       console.log("stage3")
       const followers = await client.getFollowers({ userId: instagram.id})
       console.log("stage4")
-    let foll_url_base64=  followers.data.forEach(async (el)=>{
+    followers.data.forEach(async (el)=>{
         let image = await axios.get( el.profile_pic_url, {responseType: 'arraybuffer'});
         let raw = Buffer.from(image.data).toString('base64');
         let profile_pic="data:" + image.headers["content-type"] + ";base64,"+raw;
         el.profile_pic_url=profile_pic
       })
-      res.status(200).json(foll_url_base64);
+      res.status(200).json(followers);
     } catch (e) {
       // if (e.status) {
       //   res.status(e.status).json({
