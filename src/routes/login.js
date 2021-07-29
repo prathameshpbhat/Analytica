@@ -22,6 +22,7 @@ route.post("/Analytica/users/Register", async (req, res) => {
     res.status(200).json({
       status: "success",
       Username: req.body.Email,
+      Name:req.body.Username,
       token: token,
     });
   } catch (e) {
