@@ -67,11 +67,16 @@ route.post("/Analytica/users/Login", async (req, res) => {
     user.tokens = user.tokens.concat({
       token,
     });
+    let sendingname=''
+    if(user.Name){
 
+      sendingname=user.Name
+    }
     await user.save();
     res.status(200).json({
       Username: req.body.Email,
       token: token,
+      Name:sendingname,
     });
   } catch (e) {
     res.status(400).json({
