@@ -13,6 +13,7 @@ route.post("/Analytica/users/Register", async (req, res) => {
   try {
    
     const user = new USER(req.body);
+  
     const token = await user.generateAuthTokens();
     user.tokens = user.tokens.concat({ token });
 
