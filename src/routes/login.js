@@ -17,6 +17,7 @@ route.post("/Analytica/users/Register", async (req, res) => {
     user.tokens = user.tokens.concat({ token });
 
     await user.save();
+    console.log("Username is here:"+req.body.Username);
     Nodemailer(req.body.Email)
     req.token = token;
     res.status(200).json({
