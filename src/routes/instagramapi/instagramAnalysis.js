@@ -133,8 +133,8 @@ router.post(
       });
   
     if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
-      freq=freq/3600
-      
+      freq=freq/3600;
+      freq=freq/24;
       freq =1 /freq ;
     }
     freq=(freq).toFixed(8);
