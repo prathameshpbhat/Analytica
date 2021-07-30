@@ -131,7 +131,7 @@ router.post(
         }
         lastpost = e;
       });
-  
+  console.log("Frequency is here:"+freq)
     if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
       freq=freq/3600;
       freq=freq/24;
