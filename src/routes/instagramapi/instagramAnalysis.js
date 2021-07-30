@@ -87,7 +87,7 @@ router.post(
         posts = 0;
       posts = instagram.edge_owner_to_timeline_media.count;
       followers = instagram.edge_followed_by.count;
-      let freq = 0;
+      let freq = 0.0016;
       let lastpost;
       let postdates = [];
       let postLikes = [];
@@ -133,7 +133,9 @@ router.post(
       });
   
     if (instagram.edge_owner_to_timeline_media.edges.length != 0) {
-      freq =1 /freq;
+      freq=freq/3600
+      
+      freq =1 /freq ;
     }
     freq=(freq).toFixed(8);
  
